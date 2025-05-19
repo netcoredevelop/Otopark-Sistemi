@@ -1,0 +1,64 @@
+﻿@model AuditLog
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Log Detayı";
+
+    // Eski ve yeni değerleri dictionary olarak al
+    var oldDict = !string.IsNullOrEmpty(Model.OldData)
+        ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Model.OldData)
+        : new Dictionary<string, object>();
+
+    var newDict = !string.IsNullOrEmpty(Model.NewData)
+        ? JsonConvert.DeserializeObject<Dictionary<string, object>>(Model.NewData)
+        : new Dictionary<string, object>();
+
+    // Tüm property adlarını birleştir
+    var allKeys = oldDict.Keys.Union(newDict.Keys).Distinct().ToList();
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Log Detayı</h3>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Tarih</dt>
+            <dd class="col-sm-9">@Model.OperationDate.ToString("dd.MM.yyyy HH:mm")</dd>
+            <dt class="col-sm-3">Kullanıcı</dt>
+            <dd class="col-sm-9">@Model.UserName</dd>
+            <dt class="col-sm-3">İşlem</dt>
+            <dd class="col-sm-9">@Model.OperationType</dd>
+            <dt class="col-sm-3">Entity</dt>
+            <dd class="col-sm-9">@Model.EntityName</dd>
+            <dt class="col-sm-3">EntityId</dt>
+            <dd class="col-sm-9">@Model.EntityId</dd>
+        </dl>
+
+        <h5 class="mt-4 mb-3">Değişiklik Karşılaştırması</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Alan</th>
+                        <th>Eski Değer</th>
+                        <th>Yeni Değer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var key in allKeys)
+                    {
+                        var oldValue = oldDict.ContainsKey(key) ? oldDict[key]?.ToString() : "";
+                        var newValue = newDict.ContainsKey(key) ? newDict[key]?.ToString() : "";
+                        var changed = oldValue != newValue;
+                        <tr class="@(changed ? "table-warning" : "")">
+                            <td>@key</td>
+                            <td>@oldValue</td>
+                            <td>@newValue</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Listeye Dön</a>
+    </div>
+</div>

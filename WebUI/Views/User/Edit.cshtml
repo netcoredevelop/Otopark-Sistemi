@@ -1,0 +1,128 @@
+@model WebUI.Models.UserEditViewModel
+@using WebUI.Auth
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+    
+    // Kullanıcının rol yönetim yetkisi var mı?
+    bool hasRoleManagementPermission = User.IsInRole("Admin") || User.IsInRole("Role_Edit");
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Kullanıcı Düzenle</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Username" class="form-label"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <small class="form-text text-muted">Şifreyi değiştirmek istemiyorsanız boş bırakın.</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    @if (hasRoleManagementPermission)
+                    {
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <label asp-for="SelectedRoleIds" class="form-label"></label>
+                                <div class="card">
+                                    <div class="card-body p-3">
+                                        <div class="row">
+                                        @foreach (var role in Model.AvailableRoles)
+                                        {
+                                            <div class="col-md-3 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="SelectedRoleIds" value="@role.Id" id="role_@role.Id"
+                                                           @(Model.SelectedRoleIds.Contains(role.Id) ? "checked" : "")>
+                                                    <label class="form-check-label" for="role_@role.Id">
+                                                        @RoleDisplayHelper.GetDisplayName(role.Name)
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Rol düzenleme yetkiniz bulunmamaktadır. Roller için yönetici ile iletişime geçin.
+                        </div>
+
+                        @foreach (var roleId in Model.SelectedRoleIds)
+                        {
+                            <input type="hidden" name="SelectedRoleIds" value="@roleId" />
+                        }
+                    }
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Rol seçimlerini kategorize etmek için
+            $('.entity-action-roles').on('change', function() {
+                var categoryId = $(this).data('category');
+                if ($(this).is(':checked')) {
+                    $('.' + categoryId).prop('checked', true);
+                } else {
+                    $('.' + categoryId).prop('checked', false);
+                }
+            });
+        });
+    </script>
+} 

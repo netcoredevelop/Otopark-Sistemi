@@ -1,0 +1,124 @@
+@{
+    ViewData["Title"] = "Araç Raporları";
+}
+
+<style>
+    .filter-form {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .filter-form .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    .filter-form .form-control,
+    .filter-form .form-select {
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+    }
+    .filter-form .form-control:focus,
+    .filter-form .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .btn-export {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
+    .btn-export:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+        color: white;
+    }
+</style>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">Araç Raporları</h4>
+            </div>
+            <div class="card-body">
+                <form class="filter-form" method="get" asp-action="ExportToExcel">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" name="startDate" class="form-control" value="@Context.Request.Query["startDate"]" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Bitiş Tarihi</label>
+                            <input type="date" name="endDate" class="form-control" value="@Context.Request.Query["endDate"]" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Şube</label>
+                            <select name="branchId" class="form-select">
+                                <option value="">Tümü</option>
+                                @foreach (var branch in ViewBag.Branches)
+                                {
+                                    <option value="@branch.Id" selected="@(Context.Request.Query["branchId"] == branch.Id.ToString())">
+                                        @branch.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Araç Tipi</label>
+                            <select name="vehicleTypeId" class="form-select">
+                                <option value="">Tümü</option>
+                                @foreach (var type in ViewBag.VehicleTypes)
+                                {
+                                    <option value="@type.Id" selected="@(Context.Request.Query["vehicleTypeId"] == type.Id.ToString())">
+                                        @type.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Araç Markası</label>
+                            <select name="vehicleBrandId" class="form-select">
+                                <option value="">Tümü</option>
+                                @foreach (var brand in ViewBag.VehicleBrands)
+                                {
+                                    <option value="@brand.Id" selected="@(Context.Request.Query["vehicleBrandId"] == brand.Id.ToString())">
+                                        @brand.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Araç Rengi</label>
+                            <select name="vehicleColorId" class="form-select">
+                                <option value="">Tümü</option>
+                                @foreach (var color in ViewBag.VehicleColors)
+                                {
+                                    <option value="@color.Id" selected="@(Context.Request.Query["vehicleColorId"] == color.Id.ToString())">
+                                        @color.Name
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-export">
+                                    <i class="fas fa-file-excel"></i> Excel'e Aktar
+                                </button>
+                                <a href="@Url.Action("Index", "Report")" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Temizle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

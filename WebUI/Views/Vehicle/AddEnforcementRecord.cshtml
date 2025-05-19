@@ -1,0 +1,107 @@
+@model WebUI.Models.Vehicle.EnforcementRecordCreateViewModel
+
+@{
+    ViewData["Title"] = "İcra Kaydı Ekle";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">İcra Kaydı Ekle</h3>
+
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.VehicleId" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Araç Detayına Dön
+        </a>
+    </div>
+    <div class="card-body">
+        <form asp-action="AddEnforcementRecord" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="VehicleId" />
+
+            <div class="mb-3">
+                <label asp-for="EnforcementNumber" class="form-label"></label>
+                <input asp-for="EnforcementNumber" class="form-control" />
+                <span asp-validation-for="EnforcementNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EnforcementOfficeId" class="form-label"></label>
+                <select asp-for="EnforcementOfficeId" asp-items="Model.EnforcementOffices" class="form-select select2">
+                    <option value="">-- İcra Dairesi Seçiniz --</option>
+                </select>
+                <span asp-validation-for="EnforcementOfficeId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DecisionDate" class="form-label"></label>
+                <input asp-for="DecisionDate" type="date" class="form-control" />
+                <span asp-validation-for="DecisionDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-action="Details" asp-route-id="@Model.VehicleId" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles{
+    <link rel="stylesheet" href="~/vendor/select2/css/select2.min.css">
+    <style>
+
+        .form-control, .form-select {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            }
+
+        .select2-container--default .select2-selection--single {
+            height: 42px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+        }
+
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 42px;
+                padding-left: 1rem;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 40px;
+            }
+
+    </style>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/vendor/select2/js/select2.full.min.js"></script>
+    <script src="~/js/plugins-init/select2-init.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Seçiniz...",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+} 

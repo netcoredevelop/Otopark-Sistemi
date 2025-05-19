@@ -1,0 +1,373 @@
+@model WebUI.Models.Vehicle.VehicleCreateViewModel
+
+@{
+    ViewData["Title"] = "Yeni Araç Ekle";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Yeni Araç Ekle</h3>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="plate-display mb-4">
+                <div class="plate-number">
+                    <div class="plate-text">
+                        <input asp-for="PlateNumber" class="form-control plate-input" placeholder="34ABC123" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Sol Kolon -->
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <h4 class="section-title">Araç Bilgileri</h4>
+                        <div class="mb-3">
+                            <label asp-for="VehicleOnwer" class="form-label"></label>
+                            <input asp-for="VehicleOnwer" class="form-control" />
+                            <span asp-validation-for="VehicleOnwer" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleOnwerIdentityNumber" class="form-label"></label>
+                            <input asp-for="VehicleOnwerIdentityNumber" class="form-control" />
+                            <span asp-validation-for="VehicleOnwerIdentityNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BookSequenceNo" class="form-label"></label>
+                            <input asp-for="BookSequenceNo" class="form-control" />
+                            <span asp-validation-for="BookSequenceNo" class="text-danger"></span>
+                        </div>
+
+
+
+                        <div class="mb-3">
+                            <label asp-for="EntryDate" class="form-label"></label>
+                            <input asp-for="EntryDate" type="text" class="form-control flatpickr-datetime" id="EntryDate" value="@DateTime.Now.ToString("yyyy-MM-dd HH:mm")" />
+                            <span asp-validation-for="EntryDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ExitDate" class="form-label"></label>
+                            <input asp-for="ExitDate" type="text" class="form-control flatpickr-datetime" id="ExitDate" />
+                            <span asp-validation-for="ExitDate" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label asp-for="LinkingRegionId" class="form-label"></label>
+                            <select asp-for="LinkingRegionId" asp-items="Model.LinkingRegions" class="form-select select2">
+                                <option value="">-- Bağlayan Bölgesi Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="LinkingRegionId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="LinkingTeamNumber" class="form-label"></label>
+                            <input asp-for="LinkingTeamNumber" class="form-control" />
+                            <span asp-validation-for="LinkingTeamNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="LinkingReasonId" class="form-label"></label>
+                            <select asp-for="LinkingReasonId" asp-items="Model.LinkingReasons" class="form-select select2">
+                                <option value="">-- Bağlayan Nedeni Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="LinkingReasonId" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sağ Kolon -->
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <h4 class="section-title">Araç Özellikleri</h4>
+                        <div class="mb-3">
+                            <label asp-for="BranchId" class="form-label"></label>
+                            <select asp-for="BranchId" asp-items="Model.Branches" class="form-select select2">
+                                <option value="">-- Şube Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="BranchId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleTypeId" class="form-label"></label>
+                            <select asp-for="VehicleTypeId" asp-items="Model.VehicleTypes" class="form-select select2">
+                                <option value="">-- Araç Tipi Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleBrandId" class="form-label"></label>
+                            <select asp-for="VehicleBrandId" asp-items="Model.VehicleBrands" class="form-select select2">
+                                <option value="">-- Araç Markası Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="VehicleBrandId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleModelId" class="form-label"></label>
+                            <select asp-for="VehicleModelId" asp-items="Model.VehicleModels" class="form-select select2">
+                                <option value="">-- Araç Modeli Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="VehicleModelId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleYearId" class="form-label"></label>
+                            <select asp-for="VehicleYearId" asp-items="Model.VehicleYears" class="form-select select2">
+                                <option value="">-- Araç Yılı Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="VehicleYearId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VehicleColorId" class="form-label"></label>
+                            <select asp-for="VehicleColorId" asp-items="Model.VehicleColors" class="form-select select2">
+                                <option value="">-- Araç Rengi Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="VehicleColorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="KeyLocationId" class="form-label"></label>
+                            <select asp-for="KeyLocationId" asp-items="Model.KeyLocations" class="form-select select2">
+                                <option value="">-- Anahtar Yeri Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="KeyLocationId" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label asp-for="ParkLocationId" class="form-label"></label>
+                            <select asp-for="ParkLocationId" asp-items="Model.ParkLocations" class="form-select select2">
+                                <option value="">-- Park Yeri Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="ParkLocationId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MuhammenBedeli" class="form-label"></label>
+                            <input asp-for="MuhammenBedeli" class="form-control" />
+                            <span asp-validation-for="MuhammenBedeli" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-group mt-4">
+                <h4 class="section-title">Ek Bilgiler</h4>
+                <div class="mb-3">
+                    <label asp-for="LinkingAdditionalInformation" class="form-label"></label>
+                    <textarea asp-for="LinkingAdditionalInformation" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="LinkingAdditionalInformation" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary btn-sm" style="min-width: 120px;">
+                    <i class="fas fa-save"></i> Kaydet
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-times"></i> İptal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/vendor/select2/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="~/css/CreateAndEditPageStyle.css">
+    <style>
+        .plate-display {
+            text-align: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .plate-number {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 6px;
+            padding: 10px 20px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 220px;
+        }
+
+        .plate-number::before {
+            content: "T.C.";
+            position: absolute;
+            top: 3px;
+            left: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .plate-number::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
+            background-size: 15px 15px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .plate-input {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #000;
+            text-align: center;
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0;
+        }
+
+        .plate-input:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .plate-input::placeholder {
+            color: #adb5bd;
+            font-weight: normal;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/vendor/select2/js/select2.full.min.js"></script>
+    <script src="~/js/plugins-init/select2-init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Plaka formatı için
+            $('#PlateNumber').on('input', function () {
+                let value = $(this).val().toUpperCase();
+
+                // Sadece harf, rakam ve boşluk karakterlerine izin ver
+                value = value.replace(/[^A-Z0-9\s]/g, '');
+
+                // Boşlukları düzenle
+                value = value.replace(/\s+/g, ' ').trim();
+
+                // Maksimum 11 karakter (34 ABC 123 formatı için)
+                if (value.length > 11) {
+                    value = value.substring(0, 11);
+                }
+
+                $(this).val(value);
+            });
+
+            $('.select2').select2({
+                placeholder: "Seçiniz...",
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Flatpickr ayarları
+            flatpickr("#EntryDate", {
+                enableTime: true,
+                dateFormat: "d.m.Y - H:i",
+                time_24hr: true,
+                locale: "tr",
+                minuteIncrement: 1,
+                allowInput: true,
+                defaultDate: new Date(),
+                placeholder: "Tarih ve saat seçiniz...",
+                position: "auto",
+                monthSelectorType: "static",
+                yearSelectorType: "static",
+                prevArrow: "<i class='fas fa-chevron-left'></i>",
+                nextArrow: "<i class='fas fa-chevron-right'></i>"
+            });
+
+            flatpickr("#ExitDate", {
+                enableTime: true,
+                dateFormat: "d.m.Y - H:i",
+                time_24hr: true,
+                locale: "tr",
+                minuteIncrement: 1,
+                allowInput: true,
+                placeholder: "Tarih ve saat seçiniz...",
+                position: "auto",
+                monthSelectorType: "static",
+                yearSelectorType: "static",
+                prevArrow: "<i class='fas fa-chevron-left'></i>",
+                nextArrow: "<i class='fas fa-chevron-right'></i>"
+            });
+        });
+
+        // Plaka formatı için fonksiyon
+        function formatPlateNumber(input) {
+            // Sadece harf, rakam ve tire karakterlerine izin ver
+            let value = input.value.replace(/[^A-Za-z0-9-]/g, '');
+            
+            // Tire karakterlerini kaldır
+            value = value.replace(/-/g, '');
+            
+            // Plaka formatını uygula (34ABC123)
+            if (value.length > 0) {
+                // İlk 2 karakter (şehir kodu)
+                let formatted = value.substring(0, 2);
+                
+                // Sonraki karakterler (harfler ve rakamlar)
+                if (value.length > 2) {
+                    formatted += '-' + value.substring(2, 5);
+                }
+                if (value.length > 5) {
+                    formatted += '-' + value.substring(5, 8);
+                }
+                
+                input.value = formatted.toUpperCase();
+            }
+        }
+
+        // Sayfa yüklendiğinde plaka inputunu formatla
+        document.addEventListener('DOMContentLoaded', function() {
+            const plateInput = document.querySelector('input[name="PlateNumber"]');
+            if (plateInput) {
+                plateInput.addEventListener('input', function() {
+                    formatPlateNumber(this);
+                });
+            }
+        });
+    </script>
+} 

@@ -1,0 +1,51 @@
+@model IEnumerable<Domain.Entities.User>
+
+@{
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Kullanıcı Listesi</h4>
+                <a asp-action="Create" class="btn btn-primary">Yeni Kullanıcı Ekle</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-responsive-md">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Ad</th>
+                                <th>Soyad</th>
+                                <th>E-posta</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.Id</td>
+                                    <td>@user.Username</td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@user.Email</td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+                                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-info shadow btn-xs sharp me-1"><i class="fas fa-eye"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

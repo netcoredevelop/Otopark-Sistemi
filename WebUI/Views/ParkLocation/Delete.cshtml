@@ -1,0 +1,36 @@
+@model Domain.Entities.ParkLocation
+@using WebUI.Auth
+
+@{
+    ViewData["Title"] = "Park Yeri Sil";
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Park Yeri Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <strong>Uyarı!</strong> Bu park yerini silmek istediğinizden emin misiniz?
+                </div>
+                <dl class="row">
+                    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+                </dl>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Sil
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left"></i> Listeye Dön
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

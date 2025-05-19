@@ -1,0 +1,257 @@
+﻿@using Domain.Common
+@model PaginatedList<Domain.Entities.Vehicle>
+@{
+    ViewData["Title"] = "Otopark Yönetim Paneli";
+}
+
+<div class="container-fluid">
+    <!-- Üst Kartlar -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Günlük Giriş</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="dailyEntryCount">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Günlük Kazanç</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="dailyIncome">₺0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Aktif Araç Sayısı</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="activeVehicleCount">0</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-car fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Doluluk Oranı</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="occupancyRate">0%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafikler -->
+    <div class="row">
+        <!-- Haftalık Giriş Grafiği -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Haftalık Araç Girişleri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="weeklyEntryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kazanç Grafiği -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Gelir Dağılımı</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let weeklyEntryChart;
+        let incomeChart;
+
+        // Haftalık Giriş Grafiği
+        function initWeeklyEntryChart(labels, data) {
+            var weeklyEntryCtx = document.getElementById('weeklyEntryChart').getContext('2d');
+            weeklyEntryChart = new Chart(weeklyEntryCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Araç Girişi',
+                        data: data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: true,
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gelir Dağılımı Grafiği
+        function initIncomeChart(labels, data) {
+            var incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            incomeChart = new Chart(incomeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.raw || 0;
+                                    return label + ': ₺' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // İstatistikleri güncelle
+        function updateStatistics() {
+            $.get('/api/statistics', function(data) {
+                $('#dailyEntryCount').text(data.dailyEntryCount);
+                $('#dailyIncome').text('₺' + data.dailyIncome.toFixed(2));
+                $('#activeVehicleCount').text(data.activeVehicleCount);
+                $('#occupancyRate').text(data.occupancyRate + '%');
+            });
+        }
+
+        // Haftalık verileri güncelle
+        function updateWeeklyData() {
+            $.get('/api/statistics/weekly-entries', function(data) {
+                if (weeklyEntryChart) {
+                    weeklyEntryChart.data.labels = data.labels;
+                    weeklyEntryChart.data.datasets[0].data = data.data;
+                    weeklyEntryChart.update();
+                } else {
+                    initWeeklyEntryChart(data.labels, data.data);
+                }
+            });
+        }
+
+        // Gelir dağılımını güncelle
+        function updateIncomeDistribution() {
+            $.get('/api/statistics/income-distribution', function(data) {
+                if (incomeChart) {
+                    incomeChart.data.labels = data.labels;
+                    incomeChart.data.datasets[0].data = data.data;
+                    incomeChart.update();
+                } else {
+                    initIncomeChart(data.labels, data.data);
+                }
+            });
+        }
+
+        // Sayfa yüklendiğinde istatistikleri güncelle
+        $(document).ready(function() {
+            updateStatistics();
+            updateWeeklyData();
+            updateIncomeDistribution();
+            // Her 5 dakikada bir güncelle
+            setInterval(function() {
+                updateStatistics();
+                updateWeeklyData();
+                updateIncomeDistribution();
+            }, 300000);
+        });
+
+        function editVehicle(id) {
+            $.get(`/api/vehicles/${id}`, function(vehicle) {
+                // Düzenleme modalını aç ve verileri doldur
+            });
+        }
+
+        function deleteVehicle(id) {
+            if (confirm('Bu aracı silmek istediğinizden emin misiniz?')) {
+                $.ajax({
+                    url: `/api/vehicles/${id}`,
+                    type: 'DELETE',
+                    success: function() {
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        function saveVehicle() {
+            const formData = $('#addVehicleForm').serialize();
+            $.ajax({
+                url: '/api/vehicles',
+                type: 'POST',
+                data: formData,
+                success: function() {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}

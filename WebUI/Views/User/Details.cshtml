@@ -1,0 +1,93 @@
+@model Domain.Entities.User
+@using WebUI.Auth
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Kullanıcı Detayları";
+    
+    // Kullanıcının rol görüntüleme yetkisi var mı?
+    bool hasRoleViewPermission = User.IsInRole("Admin") || User.IsInRole("Role_View");
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Kullanıcı Detayları</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>ID:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Id
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Kullanıcı Adı:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Username
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Ad:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.FirstName
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Soyad:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.LastName
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Email
+                    </div>
+                </div>
+                
+                @if (hasRoleViewPermission)
+                {
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Roller:</strong>
+                        </div>
+                        <div class="col-md-8">
+                            @if (ViewBag.UserRoles != null && ViewBag.UserRoles.Count > 0)
+                            {
+                                <ul class="list-group">
+                                    @foreach (var role in ViewBag.UserRoles)
+                                    {
+                                        <li class="list-group-item">@RoleDisplayHelper.GetDisplayName(role.Name)</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>Atanmış rol bulunmamaktadır.</p>
+                            }
+                        </div>
+                    </div>
+                }
+                
+                <div class="row">
+                    <div class="col-md-12 mt-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Düzenle</a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Listeye Dön</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

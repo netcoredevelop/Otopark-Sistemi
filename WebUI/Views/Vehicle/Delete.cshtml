@@ -1,0 +1,59 @@
+@model Domain.Entities.Vehicle
+
+@{
+    ViewData["Title"] = "Araç Sil";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Araç Silme</h3>
+        </div>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Listeye Dön
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Uyarı!</h4>
+            <p>Bu aracı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve araca bağlı tüm kayıtları da silecektir.</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Araç Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Plaka Numarası</dt>
+                    <dd class="col-sm-9">@Model.PlateNumber</dd>
+
+                    <dt class="col-sm-3">Araç Sahibi</dt>
+                    <dd class="col-sm-9">@(Model.VehicleOnwer ?? "-")</dd>
+
+                    <dt class="col-sm-3">Araç Markası</dt>
+                    <dd class="col-sm-9">@Model.VehicleBrand.Name</dd>
+
+                    <dt class="col-sm-3">Araç Modeli</dt>
+                    <dd class="col-sm-9">@Model.VehicleModel.Name</dd>
+
+                    <dt class="col-sm-3">Giriş Tarihi</dt>
+                    <dd class="col-sm-9">@Model.EntryDate.ToString("dd.MM.yyyy")</dd>
+
+                    <dt class="col-sm-3">Çıkış Tarihi</dt>
+                    <dd class="col-sm-9">@(Model.ExitDate?.ToString("dd.MM.yyyy") ?? "-")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i> Aracı Sil
+            </button>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="fas fa-times"></i> İptal
+            </a>
+        </form>
+    </div>
+</div> 

@@ -1,0 +1,655 @@
+@model Domain.Common.PaginatedList<Domain.Entities.Vehicle>
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Araçlar";
+    var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    var canAdd = userRoles.Any(r => r == "Admin" || r == "Vehicle_Add");
+    var canEdit = userRoles.Any(r => r == "Admin" || r == "Vehicle_Edit");
+    var canDelete = userRoles.Any(r => r == "Admin" || r == "Vehicle_Remove");
+}
+
+<style>
+    [data-theme-version="dark"] .card,
+    [data-theme-version="dark"] .vehicle-table,
+    [data-theme-version="dark"] .filter-form {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+    }
+
+        [data-theme-version="dark"] .vehicle-table th {
+            background: #23242a !important;
+            color: #f1f1f1 !important;
+            border-bottom: 2px solid #23242a !important;
+            border-right: 1px solid #23242a !important;
+        }
+
+        [data-theme-version="dark"] .vehicle-table td {
+            background: #181a20 !important;
+            color: #f1f1f1 !important;
+            border-bottom: 1px solid #23242a !important;
+        }
+
+    [data-theme-version="dark"] .filter-form {
+        background: #23242a !important;
+        border: 1px solid #23242a !important;
+    }
+
+        [data-theme-version="dark"] .filter-form .form-label{
+            color:white;
+        }
+
+        [data-theme-version="dark"] .filter-form .form-control,
+        [data-theme-version="dark"] .filter-form .form-select {
+            color: #f1f1f1 !important;
+            background: #181a20 !important;
+            border: 1px solid #23242a !important;
+        }
+
+            [data-theme-version="dark"] .filter-form .form-control:focus,
+            [data-theme-version="dark"] .filter-form .form-select:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25) !important;
+                background: #23242a !important;
+                color: #fff !important;
+            }
+
+
+
+    [data-theme-version="dark"] .card-header,
+    [data-theme-version="dark"] .card-body {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+    }
+
+    [data-theme-version="dark"] .pagination .page-link {
+        background: #23242a !important;
+        color: #f1f1f1 !important;
+        border: none !important;
+    }
+
+    [data-theme-version="dark"] .pagination .page-item.active .page-link {
+        background: #0d6efd !important;
+        color: #fff !important;
+    }
+    .vehicle-table {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 32px;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #e3e6f0;
+    }
+    .vehicle-table th {
+        background: #f4f6fa;
+        color: #2a2e36;
+        font-weight: 600;
+        border-bottom: 2px solid #e3e6f0;
+        padding: 0.85rem 1rem;
+        text-align: left;
+        border-right: 1px solid #e3e6f0;
+    }
+    .vehicle-table th:last-child {
+        border-right: none;
+    }
+    .vehicle-table td {
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem 1rem;
+        color: #3a3b45;
+        background: #fff;
+    }
+    .vehicle-table tr:last-child td {
+        border-bottom: none;
+    }
+    .vehicle-table tr:hover td {
+        background: #f8fafc;
+    }
+
+    table.table.vehicle-table > thead > tr > th {
+        font-size: 12px;
+        font-weight:700;
+    }
+    .btn-group-horizontal {
+        display: flex;
+        flex-direction: row;
+        gap: 0.3rem;
+    }
+    .pagination {
+        margin: 0;
+        gap: 4px;
+    }
+    .pagination .page-item {
+        margin: 0;
+    }
+    .pagination .page-link {
+        border: none;
+        padding: 8px 16px;
+        color: #2c3e50;
+        background: #fff;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+    }
+    .pagination .page-link:hover {
+        background: #f8f9fa;
+        color: #0d6efd;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .pagination .page-item.active .page-link {
+        background: #0d6efd;
+        color: #fff;
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+    }
+    .pagination .page-item.disabled .page-link {
+        background: #f8f9fa;
+        color: #adb5bd;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    .pagination .page-item.disabled .page-link:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    .pagination .page-indicator .page-link {
+        padding: 8px 12px;
+    }
+    .pagination .page-indicator .page-link i {
+        font-size: 0.8rem;
+    }
+    .page-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    @@media (max-width: 768px) {
+        .vehicle-table th, .vehicle-table td {
+            font-size: 13px;
+            padding: 0.3rem;
+        }
+        .pagination {
+            font-size: 13px;
+        }
+        .card-header .btn {
+            margin-top: 8px;
+        }
+    }
+    .filter-form {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .filter-form .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .filter-form .form-control,
+    .filter-form .form-select {
+        border: 1px solid #ced4da;
+    }
+    .filter-form .form-control:focus,
+    .filter-form .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    /* Plaka stilleri */
+    .plate-number-list {
+        background: #fff;
+        padding: 6px 12px;
+        text-align: center;
+        border-radius: 4px;
+        color: #000;
+        font-weight: 600;
+        font-family: 'Arial', sans-serif;
+        letter-spacing: 1px;
+        border: 2px solid #000;
+        position: relative;
+        display: inline-block;
+        min-width: 120px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .plate-number-list::before {
+        content: "T.C.";
+        position: absolute;
+        top: 2px;
+        left: 6px;
+        font-size: 0.6rem;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .plate-number-list::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
+        background-size: 10px 10px;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Plaka formatı için fonksiyon
+        function formatPlateNumber(input) {
+            // Sadece harf, rakam ve tire karakterlerine izin ver
+            let value = input.value.replace(/[^A-Za-z0-9-]/g, '');
+            
+            // Tire karakterlerini kaldır
+            value = value.replace(/-/g, '');
+            
+            // Plaka formatını uygula (34ABC123)
+            if (value.length > 0) {
+                // İlk 2 karakter (şehir kodu)
+                let formatted = value.substring(0, 2);
+                
+                // Sonraki karakterler (harfler ve rakamlar)
+                if (value.length > 2) {
+                    formatted += '-' + value.substring(2, 5);
+                }
+                if (value.length > 5) {
+                    formatted += '-' + value.substring(5, 8);
+                }
+                
+                input.value = formatted.toUpperCase();
+            }
+        }
+
+        // Sayfa yüklendiğinde tüm plaka inputlarını formatla
+        document.addEventListener('DOMContentLoaded', function() {
+            const plateInputs = document.querySelectorAll('input[name="plateNumber"]');
+            plateInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    formatPlateNumber(this);
+                });
+            });
+
+            // Form submit işlemi
+            const filterForm = document.querySelector('.filter-form');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const params = new URLSearchParams();
+
+                    // Sadece değeri olan parametreleri ekle
+                    for (let [key, value] of formData.entries()) {
+                        if (value && value.trim() !== '') {
+                            params.append(key, value.trim());
+                        }
+                    }
+
+                    // Sayfa boyutu ve sıralama parametrelerini ekle
+                    const pageSize = document.querySelector('select[name="pageSize"]').value;
+                    const sortOrder = document.querySelector('select[name="sortOrder"]').value;
+
+                    if (pageSize !== '10') {
+                        params.append('pageSize', pageSize);
+                    }
+                    if (sortOrder !== 'desc') {
+                        params.append('sortOrder', sortOrder);
+                    }
+
+                    // URL'yi oluştur ve yönlendir
+                    const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+                    window.location.href = url;
+                });
+            }
+
+            // Select değişikliklerinde form submit
+            const selects = document.querySelectorAll('select[name="pageSize"], select[name="sortOrder"]');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    if (form) {
+                        const formData = new FormData(form);
+                        const params = new URLSearchParams();
+
+                        // Sadece değeri olan parametreleri ekle
+                        for (let [key, value] of formData.entries()) {
+                            if (value && value.trim() !== '') {
+                                params.append(key, value.trim());
+                            }
+                        }
+
+                        // URL'yi oluştur ve yönlendir
+                        const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h4 class="card-title mb-0">Araçlar</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    @if (canAdd)
+                    {
+                        <a asp-action="Create" class="btn btn-primary btn-sm">
+                            <i class="fa fa-plus"></i> Yeni Araç Ekle
+                        </a>
+                    }
+                    <a asp-action="DeletedVehicles" class="btn btn-warning btn-sm">
+                        <i class="fas fa-trash"></i> Silinen Araçlar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+
+                <!-- Filtreleme Alanı -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <form class="filter-form">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Plaka</label>
+                                    <input type="text" name="plateNumber" class="form-control" value="@Context.Request.Query["plateNumber"]" />
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Araç Sahibi</label>
+                                    <input type="text" name="vehicleOwner" class="form-control" value="@Context.Request.Query["vehicleOwner"]" />
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Başlangıç Tarihi</label>
+                                    <input type="date" name="startDate" class="form-control" value="@Context.Request.Query["startDate"]" />
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Bitiş Tarihi</label>
+                                    <input type="date" name="endDate" class="form-control" value="@Context.Request.Query["endDate"]" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 d-flex justify-content-end">
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-search"></i> Filtrele
+                                        </button>
+                                        <a href="@Url.Action("Index", "Vehicle")" class="btn btn-secondary btn-sm">
+                                            <i class="fas fa-times"></i> Temizle
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Sayfa Boyutu ve Sıralama Seçenekleri -->
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <form method="get" class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center">
+                                    <label class="form-label mb-0 me-2">Sayfa Başına:</label>
+                                    <select name="pageSize" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                                        @{
+                                            var currentPageSize = Context.Request.Query["pageSize"].ToString();
+                                            if (string.IsNullOrEmpty(currentPageSize))
+                                            {
+                                                currentPageSize = "10";
+                                            }
+                                        }
+                                        <option value="5" selected="@(currentPageSize == "5")">5 Kayıt</option>
+                                        <option value="10" selected="@(currentPageSize == "10")">10 Kayıt</option>
+                                        <option value="20" selected="@(currentPageSize == "20")">20 Kayıt</option>
+                                        <option value="50" selected="@(currentPageSize == "50")">50 Kayıt</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <label class="form-label mb-0 me-2">Sıralama:</label>
+                                    <select name="sortOrder" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                                        @{
+                                            var currentSortOrder = Context.Request.Query["sortOrder"].ToString();
+                                            if (string.IsNullOrEmpty(currentSortOrder))
+                                            {
+                                                currentSortOrder = "desc";
+                                            }
+                                        }
+                                        <option value="desc" selected="@(currentSortOrder == "desc")">Yeniden Eskiye</option>
+                                        <option value="asc" selected="@(currentSortOrder == "asc")">Eskiden Yeniye</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted small">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Toplam @Model.TotalCount kayıt, @Model.TotalPages sayfa
+                                </span>
+                            </div>
+                            <!-- Diğer filtre parametrelerini gizli input olarak ekle -->
+                            <input type="hidden" name="plateNumber" value="@Context.Request.Query["plateNumber"]" />
+                            <input type="hidden" name="vehicleOwner" value="@Context.Request.Query["vehicleOwner"]" />
+                            <input type="hidden" name="startDate" value="@Context.Request.Query["startDate"]" />
+                            <input type="hidden" name="endDate" value="@Context.Request.Query["endDate"]" />
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-responsive mb-4">
+                    <table class="table vehicle-table">
+                        <thead>
+                            <tr>
+                                
+                                <th>Plaka</th>
+                                <th>Araç Sahibi</th>
+                                <th>Giriş Tarihi</th>
+                                <th>Çıkış Tarihi</th>
+                                <th>Şube</th>
+                                <th>Araç Markası</th>
+                                <th>Araç Modeli</th>
+                                <th>Park Yeri</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+
+                                    <td><div class="plate-number-list">@item.PlateNumber</div></td>
+                                    <td>@item.VehicleOnwer</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2">@item.EntryDate.ToString("dd.MM.yyyy")</span>
+                                            <span class="badge badge-pill badge-secondary">
+                                                <i class="fas fa-clock me-1"></i>
+                                                @item.EntryDate.ToString("HH:mm")
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.ExitDate.HasValue)
+                                        {
+                                            <div class="d-flex align-items-center">
+                                                <span class="me-2">@item.ExitDate.Value.ToString("dd.MM.yyyy")</span>
+                                                <span class="badge badge-pill badge-warning">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    @item.ExitDate.Value.ToString("HH:mm")
+                                                </span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                    <td>@item.Branch?.Name</td>
+                                    <td>@item.VehicleBrand?.Name</td>
+                                    <td>@item.VehicleModel?.Name</td>
+                                    <td>@item.ParkLocation?.Name</td>
+
+                                    <td>
+                                        <div class="btn-group-horizontal" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-xs" title="Detaylar">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (canEdit)
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-xs" title="Düzenle">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            }
+                                            @if (canDelete)
+                                            {
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-xs" title="Sil">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row align-items-center mb-3">
+                    <div class="col-12 col-md-6 mb-2 mb-md-0">
+                        <span class="page-info">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Toplam @Model.TotalCount kayıt, @Model.TotalPages sayfa
+                        </span>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <nav aria-label="Sayfa Geçişi">
+                            <ul class="pagination justify-content-md-end mb-0 flex-wrap">
+                                @{
+                                    var pageSize = Context.Request.Query["pageSize"].ToString();
+                                    var sortOrder = Context.Request.Query["sortOrder"].ToString();
+                                    var plateNumber = Context.Request.Query["plateNumber"].ToString();
+                                    var vehicleOwner = Context.Request.Query["vehicleOwner"].ToString();
+                                    var startDate = Context.Request.Query["startDate"].ToString();
+                                    var endDate = Context.Request.Query["endDate"].ToString();
+                                }
+                                <li class="page-item page-indicator @(!Model.HasPreviousPage ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-pageIndex="@(Model.PageIndex - 1)"
+                                       asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
+                                       asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
+                                       asp-route-plateNumber="@(!string.IsNullOrEmpty(plateNumber) ? plateNumber : null)"
+                                       asp-route-vehicleOwner="@(!string.IsNullOrEmpty(vehicleOwner) ? vehicleOwner : null)"
+                                       asp-route-startDate="@(!string.IsNullOrEmpty(startDate) ? startDate : null)"
+                                       asp-route-endDate="@(!string.IsNullOrEmpty(endDate) ? endDate : null)"
+                                       tabindex="-1">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                @{
+                                    var totalPages = Model.TotalPages;
+                                    var currentPage = Model.PageIndex;
+                                    var startPage = Math.Max(1, currentPage - 2);
+                                    var endPage = Math.Min(totalPages, startPage + 4);
+
+                                    if (endPage - startPage < 4)
+                                    {
+                                        startPage = Math.Max(1, endPage - 4);
+                                    }
+
+                                    if (startPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" asp-action="Index" 
+                                               asp-route-pageIndex="1"
+                                               asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
+                                               asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
+                                               asp-route-plateNumber="@(!string.IsNullOrEmpty(plateNumber) ? plateNumber : null)"
+                                               asp-route-vehicleOwner="@(!string.IsNullOrEmpty(vehicleOwner) ? vehicleOwner : null)"
+                                               asp-route-startDate="@(!string.IsNullOrEmpty(startDate) ? startDate : null)"
+                                               asp-route-endDate="@(!string.IsNullOrEmpty(endDate) ? endDate : null)">1</a>
+                                        </li>
+                                        if (startPage > 2)
+                                        {
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                    }
+
+                                    for (int i = startPage; i <= endPage; i++)
+                                    {
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <a class="page-link" asp-action="Index" 
+                                               asp-route-pageIndex="@i"
+                                               asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
+                                               asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
+                                               asp-route-plateNumber="@(!string.IsNullOrEmpty(plateNumber) ? plateNumber : null)"
+                                               asp-route-vehicleOwner="@(!string.IsNullOrEmpty(vehicleOwner) ? vehicleOwner : null)"
+                                               asp-route-startDate="@(!string.IsNullOrEmpty(startDate) ? startDate : null)"
+                                               asp-route-endDate="@(!string.IsNullOrEmpty(endDate) ? endDate : null)">@i</a>
+                                        </li>
+                                    }
+
+                                    if (endPage < totalPages)
+                                    {
+                                        if (endPage < totalPages - 1)
+                                        {
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        }
+                                        <li class="page-item">
+                                            <a class="page-link" asp-action="Index" 
+                                               asp-route-pageIndex="@totalPages"
+                                               asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
+                                               asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
+                                               asp-route-plateNumber="@(!string.IsNullOrEmpty(plateNumber) ? plateNumber : null)"
+                                               asp-route-vehicleOwner="@(!string.IsNullOrEmpty(vehicleOwner) ? vehicleOwner : null)"
+                                               asp-route-startDate="@(!string.IsNullOrEmpty(startDate) ? startDate : null)"
+                                               asp-route-endDate="@(!string.IsNullOrEmpty(endDate) ? endDate : null)">@totalPages</a>
+                                        </li>
+                                    }
+                                }
+                                <li class="page-item page-indicator @(!Model.HasNextPage ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" 
+                                       asp-route-pageIndex="@(Model.PageIndex + 1)"
+                                       asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
+                                       asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
+                                       asp-route-plateNumber="@(!string.IsNullOrEmpty(plateNumber) ? plateNumber : null)"
+                                       asp-route-vehicleOwner="@(!string.IsNullOrEmpty(vehicleOwner) ? vehicleOwner : null)"
+                                       asp-route-startDate="@(!string.IsNullOrEmpty(startDate) ? startDate : null)"
+                                       asp-route-endDate="@(!string.IsNullOrEmpty(endDate) ? endDate : null)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

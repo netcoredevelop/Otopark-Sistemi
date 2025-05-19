@@ -1,0 +1,84 @@
+@model IEnumerable<Domain.Entities.VehicleYear>
+@using WebUI.Auth
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Araç Yılları";
+    
+    // Kullanıcının yönetim yetkisi var mı?
+    bool hasAddPermission = User.IsInRole("Admin") || User.IsInRole("VehicleYear_Add");
+    bool hasEditPermission = User.IsInRole("Admin") || User.IsInRole("VehicleYear_Edit");
+    bool hasRemovePermission = User.IsInRole("Admin") || User.IsInRole("VehicleYear_Remove");
+    bool hasViewPermission = User.IsInRole("Admin") || User.IsInRole("VehicleYear_View");
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Araç Yılları</h4>
+                @if (hasAddPermission)
+                {
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus"></i> Yeni Yıl Ekle
+                    </a>
+                }
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-responsive-md">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td>
+                                        <div class="d-flex">
+                                            @if (hasViewPermission)
+                                            {
+                                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm me-1">
+                                                    <i class="fa fa-info-circle"></i> Detay
+                                                </a>
+                                            }
+                                            @if (hasEditPermission)
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm me-1">
+                                                    <i class="fa fa-pencil"></i> Düzenle
+                                                </a>
+                                            }
+                                            @if (hasRemovePermission)
+                                            {
+                                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-trash"></i> Sil
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.table').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/tr.json',
+                },
+                responsive: true
+            });
+        });
+    </script>
+} 

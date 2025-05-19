@@ -1,0 +1,64 @@
+@model Domain.Entities.User
+
+@{
+    ViewData["Title"] = "Kullanıcı Sil";
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Kullanıcı Silme Onayı</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h5><i class="fas fa-exclamation-triangle"></i> UYARI!</h5>
+                    <p>Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>ID:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Id
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Kullanıcı Adı:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Username
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Ad Soyad:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.FirstName @Model.LastName
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        @Model.Email
+                    </div>
+                </div>
+                
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <button type="submit" class="btn btn-danger me-2">Sil</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 

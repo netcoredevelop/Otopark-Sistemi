@@ -1,0 +1,44 @@
+@model Domain.Entities.VehicleModel
+@using WebUI.Auth
+
+@{
+    ViewData["Title"] = "Araç Modeli Detayı";
+    bool hasEditPermission = User.IsInRole("Admin") || User.IsInRole("VehicleModel_Edit");
+    bool hasRemovePermission = User.IsInRole("Admin") || User.IsInRole("VehicleModel_Remove");
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Araç Modeli Detayı</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+                    
+                    <dt class="col-sm-3">Marka</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.VehicleBrand.Name)</dd>
+                </dl>
+                <div class="mt-4">
+                    @if (hasEditPermission)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="fa fa-pencil"></i> Düzenle
+                        </a>
+                    }
+                    @if (hasRemovePermission)
+                    {
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                            <i class="fa fa-trash"></i> Sil
+                        </a>
+                    }
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,278 @@
+﻿.card {
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    border-radius: 15px;
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.info-group {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+.plate-display {
+    text-align: center;
+    padding: 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.plate-input-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.plate-input {
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+    .plate-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .plate-input::placeholder {
+        color: #adb5bd;
+        font-weight: normal;
+    }
+
+.select2-container--default .select2-selection--single {
+    height: 42px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 42px;
+        padding-left: 1rem;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px;
+    }
+
+.flatpickr-input {
+    height: 42px;
+    font-size: 0.875rem;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #0d6efd;
+    border-color: #0d6efd;
+}
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7;
+    }
+
+.btn-secondary {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+    .btn-secondary:hover {
+        background: #5c636a;
+        border-color: #5c636a;
+    }
+
+.text-danger {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+
+/* Flatpickr özel stilleri */
+.flatpickr-calendar {
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 320px;
+    padding: 10px;
+}
+
+.flatpickr-months {
+    padding: 5px 0;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.flatpickr-month {
+    height: 40px;
+}
+
+.flatpickr-current-month {
+    font-size: 1rem;
+    padding: 8px 0;
+}
+
+.flatpickr-weekday {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 8px 0;
+}
+
+.flatpickr-day {
+    border-radius: 6px;
+    margin: 2px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+    .flatpickr-day.selected {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: #fff;
+    }
+
+    .flatpickr-day:hover {
+        background: #e9ecef;
+        border-color: #e9ecef;
+    }
+
+    .flatpickr-day.selected:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7;
+    }
+
+.flatpickr-time {
+    border-top: 1px solid #e9ecef;
+    padding: 8px 0;
+}
+
+    .flatpickr-time input {
+        font-size: 0.9rem;
+        color: #2c3e50;
+    }
+
+        .flatpickr-time input:hover,
+        .flatpickr-time input:focus {
+            background: #f8f9fa;
+        }
+
+    .flatpickr-time .flatpickr-am-pm {
+        padding: 0 4px;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .flatpickr-time .flatpickr-am-pm:focus {
+            background: #f8f9fa;
+        }
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+    background: #fff;
+}
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
+        background: #f8f9fa;
+    }
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    padding: 4px;
+    top: 5px;
+}
+
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .flatpickr-months .flatpickr-prev-month:hover svg,
+    .flatpickr-months .flatpickr-next-month:hover svg {
+        fill: #0d6efd;
+    }
+
+/* Input alanı stilleri */
+.flatpickr-input {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: #2c3e50;
+    background-color: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    .flatpickr-input:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }

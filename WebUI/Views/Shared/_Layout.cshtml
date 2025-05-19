@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="tr-TR">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>@ViewData["Title"] - WebUI</title>
+	<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+	<link href="~/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+	<link href="~/css/style.css" rel="stylesheet">
+	@await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+	<div id="preloader">
+		<div class="lds-ripple">
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+
+	@await Html.PartialAsync("Partial/_PartialHeader")
+	@await Html.PartialAsync("Partial/_PartialSidebar")
+
+		<div class="content-body">
+			<div class="container-fluid">
+				@RenderBody()
+			</div>
+		</div>
+
+	@await Html.PartialAsync("Partial/_PartialFooter")
+	@await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sayfa yüklenince localStorage'dan tema oku ve uygula
+            const savedTheme = localStorage.getItem('theme-version');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme-version', savedTheme);
+                updateThemeIcons(savedTheme);
+            }
+
+            // Toggle butonuna tıklama
+            document.querySelectorAll('.dz-theme-mode').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    let currentTheme = document.body.getAttribute('data-theme-version');
+                    let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    document.body.setAttribute('data-theme-version', newTheme);
+                    localStorage.setItem('theme-version', newTheme);
+                    updateThemeIcons(newTheme);
+                });
+            });
+
+            function updateThemeIcons(theme) {
+                const iconLight = document.getElementById('icon-light');
+                const iconDark = document.getElementById('icon-dark');
+                if (theme === 'dark') {
+                    if (iconLight) iconLight.style.display = 'none';
+                    if (iconDark) iconDark.style.display = 'inline-block';
+                } else {
+                    if (iconLight) iconLight.style.display = 'inline-block';
+                    if (iconDark) iconDark.style.display = 'none';
+                }
+            }
+        });
+    </script>
+
+    <script>
+        (function () {
+            // Her sayfa yüklemede ve her resize'da localStorage'dan oku ve uygula
+            function applyThemeFromStorage() {
+                var savedTheme = localStorage.getItem('theme-version');
+                if (savedTheme) {
+                    document.body.setAttribute('data-theme-version', savedTheme);
+                }
+            }
+            applyThemeFromStorage();
+
+            // Eğer tema framework'ü resize veya başka bir event'te sıfırlıyorsa, tekrar uygula
+            window.addEventListener('resize', applyThemeFromStorage);
+            window.addEventListener('DOMContentLoaded', applyThemeFromStorage);
+            // Eğer SPA ise, sayfa değişimlerinde de uygula
+            window.addEventListener('popstate', applyThemeFromStorage);
+        })();
+    </script>
+</body>
+</html>

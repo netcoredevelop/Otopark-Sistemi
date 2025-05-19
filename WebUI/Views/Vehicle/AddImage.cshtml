@@ -1,0 +1,179 @@
+@model WebUI.Models.Vehicle.VehicleImageUploadViewModel
+
+@{
+    ViewData["Title"] = "Araç Resmi Yükle";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">Araç Resmi Yükle</h3>
+        </div>
+        <a asp-action="Details" asp-route-id="@Model.VehicleId" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Araç Detayına Dön
+        </a>
+    </div>
+    <div class="card-body">
+        <form id="imageUploadForm" class="dropzone">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="vehicleId" value="@Model.VehicleId" />
+            <div class="fallback">
+                <input name="files" type="file" multiple accept="image/*" />
+            </div>
+            <div class="dz-message">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span>Resimleri buraya sürükleyin veya yüklemek için tıklayın</span>
+            </div>
+        </form>
+
+        <div class="mt-3">
+            <button type="button" id="submitAll" class="btn btn-primary btn-sm">
+                <i class="fas fa-save"></i> Kaydet
+            </button>
+            <a asp-action="Details" asp-route-id="@Model.VehicleId" class="btn btn-secondary btn-sm">
+                <i class="fas fa-times"></i> İptal
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    
+    <script>
+        Dropzone.autoDiscover = false;
+        
+        var myDropzone = new Dropzone("#imageUploadForm", {
+            url: "/Vehicle/AddImage",
+            paramName: "files",
+            maxFilesize: 5, // MB
+            acceptedFiles: "image/*",
+            addRemoveLinks: true,
+            dictDefaultMessage: "Resimleri buraya sürükleyin veya yüklemek için tıklayın",
+            dictRemoveFile: "Resmi Kaldır",
+            dictCancelUpload: "Yüklemeyi İptal Et",
+            dictFileTooBig: "Resim çok büyük ({{filesize}}MB). Maksimum dosya boyutu: {{maxFilesize}}MB.",
+            dictInvalidFileType: "Bu dosya türü yüklenemez.",
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFiles: 10,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            init: function() {
+                var submitButton = document.querySelector("#submitAll");
+                var myDropzone = this;
+
+                submitButton.addEventListener("click", function() {
+                    if (myDropzone.getQueuedFiles().length === 0) {
+                        alert("Lütfen en az bir resim seçiniz.");
+                        return;
+                    }
+                    myDropzone.processQueue();
+                });
+
+                this.on("sendingmultiple", function(files, xhr, formData) {
+                    formData.append("vehicleId", document.getElementById("vehicleId").value);
+                    console.log("Gönderilen resimler:", files);
+                    console.log("FormData:", formData);
+                });
+
+                this.on("successmultiple", function(files, response) {
+                    console.log("Başarılı yanıt:", response);
+                    if (response.success) {
+                        window.location.href = "/Vehicle/Details/" + @Model.VehicleId;
+                    } else {
+                        alert(response.message || "Resim yükleme sırasında bir hata oluştu.");
+                    }
+                });
+
+                this.on("errormultiple", function(files, response) {
+                    console.log("Hata yanıtı:", response);
+                    alert(response.message || "Resim yükleme sırasında bir hata oluştu.");
+                });
+
+                this.on("queuecomplete", function() {
+                    if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                        console.log("Tüm resimler yüklendi");
+                    }
+                });
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .dropzone {
+            border: 2px dashed #0d6efd;
+            background: linear-gradient(135deg, #23242a 0%, #181a20 100%);
+            border-radius: 16px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s, background 0.3s;
+            box-shadow: 0 4px 24px rgba(13,110,253,0.08);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            cursor: pointer;
+        }
+        .dropzone.dz-drag-hover {
+            border-color: #198754;
+            background: linear-gradient(135deg, #181a20 0%, #23242a 100%);
+        }
+        .dropzone .dz-message {
+            font-size: 1.2rem;
+            color: #bbb;
+            font-weight: 500;
+            text-align: center;
+            padding: 24px 0;
+            transition: color 0.3s;
+        }
+        .dropzone .dz-message i {
+            font-size: 2.5rem;
+            color: #0d6efd;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .dropzone .dz-preview {
+            background: #23242a;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            margin: 10px;
+            padding: 8px;
+            display: inline-block;
+            vertical-align: top;
+            position: relative;
+        }
+        .dropzone .dz-preview .dz-image {
+            border-radius: 8px;
+            overflow: hidden;
+            background: #181a20;
+        }
+        .dropzone .dz-preview .dz-details {
+            color: #fff;
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+        .dropzone .dz-preview .dz-remove {
+            color: #ff4d4f;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .dropzone .dz-preview .dz-remove:hover {
+            color: #d90429;
+        }
+        .dropzone .dz-error-message {
+            color: #ff4d4f;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+    </style>
+} 

@@ -1,0 +1,65 @@
+﻿@using System.Security.Claims
+
+@{
+    var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    var isAdmin = userRoles.Contains("Admin");
+    var isUser = userRoles.Contains("User");
+}
+
+<div class="dlabnav">
+	<div class="dlabnav-scroll">
+		<ul class="metismenu" id="menu">
+			<li>
+				<a asp-controller="Home" asp-action="Index">
+					<i class="flaticon-025-dashboard"></i>
+					<span class="nav-text">Dashboard</span>
+				</a>
+			</li>
+
+			@if (User.Identity.IsAuthenticated)
+			{
+				<!-- Araç İşlemleri -->
+				<li>
+					<a class="has-arrow " href="javascript:void()" aria-expanded="false">
+						<i class="fas fa-car-side me-2"></i>
+						<span class="nav-text">Araç İşlemleri</span>
+					</a>
+					<ul aria-expanded="false">
+						<li><a asp-controller="Vehicle" asp-action="Index">Araçlar</a></li>
+						@if (User.IsInRole("Admin"))
+						{
+							<li><a asp-controller="Vehicle" asp-action="Create">Yeni Araç Ekle</a></li>
+						}
+					</ul>
+				</li>
+
+				<!-- Raporlar -->
+				<li>
+					<a asp-controller="Report" asp-action="Index">
+						<i class="fas fa-file-excel me-2"></i>
+						<span class="nav-text">Raporlar</span>
+					</a>
+				</li>
+			}
+			
+			@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+			{
+				<li>
+					<a class="has-arrow " href="javascript:void()" aria-expanded="false">
+						<i class="flaticon-093-waving"></i>
+						<span class="nav-text">Yönetim</span>
+					</a>
+					<ul aria-expanded="false">
+	
+						<li><a asp-controller="User" asp-action="Index">Kullanıcılar</a></li>
+						<li><a asp-controller="User" asp-action="Create">Yeni Kullanıcı</a></li>
+                        <li><a asp-controller="Vehicle" asp-action="DeletedVehicles">Çöp Kutusu</a></li>
+                        <li><a asp-controller="Definitions" asp-action="Index">Tanımlamalar</a>
+                        <li><a asp-controller="AuditLog" asp-action="Index">Sistem Logları</a>
+                        </li>
+					</ul>
+				</li>
+			}
+		</ul>
+	</div>
+</div>
