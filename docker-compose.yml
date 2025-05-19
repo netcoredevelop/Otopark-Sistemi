@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    networks:
+      - otopark-network
+    # NOT: Volume kullanılmıyor, her başlatmada DB sıfırlanır
+    # init.sql dosyasını otomatik yüklemek için bind mount yapabilirsin:
+    volumes:
+      - ./Infrastructure/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    networks:
+      - otopark-network
+    environment:
+      ConnectionStrings__DefaultConnection: Server=db;Database=OtoparkDB;User Id=sa;Password=YourStrong@Passw0rd;Encrypt=True;TrustServerCertificate=True
+    command: >
+      /bin/sh -c "
+      # SQL Server hazır olana kadar bekle
+      until /opt/mssql-tools/bin/sqlcmd -S db -U sa -P YourStrong@Passw0rd -Q 'SELECT 1' > /dev/null 2>&1; do
+        echo 'Waiting for SQL Server to be ready...';
+        sleep 5;
+      done &&
+      dotnet ef database update --project Infrastructure --startup-project WebUI
+      "
+
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - migration
+    ports:
+      - "8080:80"
+    environment:
+      ConnectionStrings__DefaultConnection: Server=db;Database=OtoparkDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+    networks:
+      - otopark-network
+
+networks:
+  otopark-network:
+    driver: bridge

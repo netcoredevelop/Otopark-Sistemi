@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -320,6 +320,15 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedBy = "System",
+                            CreatedDate = new DateTime(2025, 5, 19, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Name = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -367,6 +376,19 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedBy = "System",
+                            CreatedDate = new DateTime(2025, 5, 19, 12, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@otopark.com",
+                            FirstName = "Admin",
+                            LastName = "User",
+                            PasswordHash = "$2a$12$eQ65yPg2F7rBe.yHmUgrDuqdf/xgPI3FSuX9vuc9jA4YaXytq8F7S",
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
@@ -405,6 +427,16 @@ namespace Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedBy = "System",
+                            CreatedDate = new DateTime(2025, 5, 19, 12, 0, 0, 0, DateTimeKind.Utc),
+                            RoleId = 1,
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Vehicle", b =>
