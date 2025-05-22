@@ -1,37 +1,37 @@
-version: '3.8'
+version: "3.9"
 
 services:
   db:
+    container_name: parksoft-db
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "YourStrong@Passw0rd"
       MSSQL_PID: "Developer"
     ports:
-      - "1433:1433"
+      - "1434:1433"
     networks:
-      - otopark-network
+      - parksoft-network
     volumes:
       - ./Infrastructure/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    # Ubuntu için gerekli ayarlar
     cap_add:
       - SYS_PTRACE
     security_opt:
       - seccomp:unconfined
 
   migration:
+    container_name: parksoft-migration
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - db
     networks:
-      - otopark-network
+      - parksoft-network
     environment:
-      ConnectionStrings__DefaultConnection: Server=db;Database=OtoparkDB;User Id=sa;Password=YourStrong@Passw0rd;Encrypt=True;TrustServerCertificate=True
+      ConnectionStrings__DefaultConnection: Server=db;Database=ParkSoftDB;User Id=sa;Password=YourStrong@Passw0rd;Encrypt=True;TrustServerCertificate=True
     command: >
       /bin/sh -c "
-      # SQL Server hazır olana kadar bekle
       until /opt/mssql-tools/bin/sqlcmd -S db -U sa -P YourStrong@Passw0rd -Q 'SELECT 1' > /dev/null 2>&1; do
         echo 'Waiting for SQL Server to be ready...';
         sleep 5;
@@ -40,6 +40,7 @@ services:
       "
 
   webapp:
+    container_name: parksoft-webapp
     build:
       context: .
       dockerfile: Dockerfile
@@ -47,14 +48,16 @@ services:
       - db
       - migration
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
-      ConnectionStrings__DefaultConnection: Server=db;Database=OtoparkDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True
+      ConnectionStrings__DefaultConnection: Server=db;Database=ParkSoftDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
     networks:
-      - otopark-network
+      - parksoft-network
+    volumes:
+      - ./publish/wwwroot:/app/wwwroot
 
 networks:
-  otopark-network:
+  parksoft-network:
     driver: bridge
