@@ -14,7 +14,7 @@ public class RoleSeederService : IRoleSeederService
         "Vehicle", "VehicleBrand", "VehicleModel", "VehicleType", "VehicleColor", 
         "VehicleYear", "KeyLocation", "LinkingReason", "LinkingRegion", "Branch", 
         "ParkLocation", "VehicleImage", "Document", "EnforcementRecord", "EnforcementOffice", 
-        "User", "Role"
+        "User", "Role", "Transaction", "TransactionCategory"
     };
     
     // İşlem isimleri

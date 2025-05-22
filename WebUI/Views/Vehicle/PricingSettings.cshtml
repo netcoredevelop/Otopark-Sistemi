@@ -1,0 +1,188 @@
+@model List<Domain.Entities.VehicleType>
+@{
+    ViewData["Title"] = "Fiyatlandırma Ayarları";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Fiyatlandırma Ayarları</h6>
+            <button type="button" class="btn btn-primary" onclick="addNewPricingRow()">
+                <i class="fas fa-plus"></i> Yeni Fiyat Ekle
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="pricingTable">
+                    <thead>
+                        <tr>
+                            <th>Araç Tipi</th>
+                            <th>UKOME Tarifesi (₺)</th>
+                            <th>Emniyet/Jandarma Tarifesi (₺)</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vehicleType in Model)
+                        {
+                            <tr data-vehicle-type-id="@vehicleType.Id">
+                                <td>@vehicleType.Name</td>
+                                <td>
+                                    <input type="number" class="form-control ukome-price" 
+                                           value="@(vehicleType.UkomePrice?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) ?? "0.00")" 
+                                           step="0.01" min="0">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control police-price" 
+                                           value="@(vehicleType.PolicePrice?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) ?? "0.00")" 
+                                           step="0.01" min="0">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-sm" 
+                                            onclick="savePricing(@vehicleType.Id)">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" 
+                                            onclick="deletePricing(@vehicleType.Id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function addNewPricingRow() {
+            const tbody = document.querySelector('#pricingTable tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <select class="form-control vehicle-type-select">
+                        <option value="">Araç Tipi Seçin</option>
+                        @foreach (var vehicleType in Model)
+                        {
+                            <option value="@vehicleType.Id">@vehicleType.Name</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="form-control ukome-price" value="0.00" step="0.01" min="0">
+                </td>
+                <td>
+                    <input type="number" class="form-control police-price" value="0.00" step="0.01" min="0">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-success btn-sm" onclick="saveNewPricing(this)">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function removeRow(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function saveNewPricing(button) {
+            const row = button.closest('tr');
+            const vehicleTypeId = row.querySelector('.vehicle-type-select').value;
+            const ukomePrice = row.querySelector('.ukome-price').value;
+            const policePrice = row.querySelector('.police-price').value;
+
+            if (!vehicleTypeId) {
+                alert('Lütfen bir araç tipi seçin');
+                return;
+            }
+
+            const data = {
+                vehicleTypeId: parseInt(vehicleTypeId),
+                ukomePrice: parseFloat(ukomePrice),
+                policePrice: parseFloat(policePrice)
+            };
+
+            $.ajax({
+                url: '/api/pricing',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert('Fiyatlandırma başarıyla kaydedildi');
+                    location.reload();
+                },
+                error: function(error) {
+                    alert('Fiyatlandırma kaydedilirken bir hata oluştu');
+                    console.error(error);
+                }
+            });
+        }
+
+        function savePricing(vehicleTypeId) {
+            const row = document.querySelector(`tr[data-vehicle-type-id="${vehicleTypeId}"]`);
+            const ukomePrice = row.querySelector('.ukome-price').value;
+            const policePrice = row.querySelector('.police-price').value;
+
+            const data = {
+                vehicleTypeId: vehicleTypeId,
+                ukomePrice: parseFloat(ukomePrice),
+                policePrice: parseFloat(policePrice)
+            };
+
+            $.ajax({
+                url: '/api/pricing',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert('Fiyatlandırma başarıyla güncellendi');
+                },
+                error: function(error) {
+                    alert('Fiyatlandırma güncellenirken bir hata oluştu');
+                    console.error(error);
+                }
+            });
+        }
+
+        function deletePricing(vehicleTypeId) {
+            if (confirm('Bu fiyatlandırmayı silmek istediğinizden emin misiniz?')) {
+                $.ajax({
+                    url: `/api/pricing/${vehicleTypeId}`,
+                    type: 'DELETE',
+                    success: function(response) {
+                        alert('Fiyatlandırma başarıyla silindi');
+                        location.reload();
+                    },
+                    error: function(error) {
+                        alert('Fiyatlandırma silinirken bir hata oluştu');
+                        console.error(error);
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .table th {
+            background-color: #f8f9fc;
+        }
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        .btn-sm {
+            margin: 0 2px;
+        }
+    </style>
+} 

@@ -7,6 +7,7 @@ namespace Application.Interfaces;
 public interface IVehicleRepository : IRepository<Vehicle, int>
 {
     IQueryable<Vehicle> GetQueryable();
+    bool? GetByPlateNumberAsync(string plateNumber);
     Task<IEnumerable<Vehicle>> GetDeletedVehiclesAsync();
     Task<PaginatedList<Vehicle>> GetPagedAsync(int pageIndex, int pageSize);
     Task<PaginatedList<Vehicle>> GetPagedAsync(Expression<Func<Vehicle, bool>> predicate, int pageIndex, int pageSize);

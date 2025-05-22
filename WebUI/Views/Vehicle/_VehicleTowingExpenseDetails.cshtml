@@ -1,0 +1,91 @@
+@model WebUI.Models.Vehicle.TowingExpenseViewModel
+@using System.Security.Claims
+@{
+    var userRoles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+    var canEdit = userRoles.Any(r => r == "Admin" || r == "TowingExpense_Edit");
+    var canDelete = userRoles.Any(r => r == "Admin" || r == "TowingExpense_Remove");
+}
+
+@{
+    // AntiForgeryToken for AJAX
+    @Html.AntiForgeryToken()
+}
+
+<div class="info-group payment-info-group d-flex flex-wrap justify-content-between align-items-start position-relative">
+    <div style="width:100%">
+        <h4 class="section-title mb-4">Çekici Gider Bilgileri</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Çekici Tarihi</div>
+                <div class="payment-value">@Model.TowingDate.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Tutar</div>
+                <div class="payment-value">@Model.Amount.ToString("N2") ₺</div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="col-12 mb-3">
+                    <div class="payment-label">Açıklama</div>
+                    <div class="payment-value">@Model.Description</div>
+                </div>
+            }
+        </div>
+    </div>
+    @if (canEdit || canDelete)
+    {
+        <div class="payment-actions ms-auto d-flex gap-2 position-absolute top-0 end-0 mt-4 me-4">
+            @if (canEdit)
+            {
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTowingExpenseModal">
+                    <i class="fas fa-edit"></i> Düzenle
+                </button>
+            }
+            @if (canDelete)
+            {
+                <button id="deleteTowingExpenseBtn" class="btn btn-danger btn-sm" onclick="deleteTowingExpense()">
+                    <i class="fas fa-trash"></i> Sil
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@await Html.PartialAsync("_EditTowingExpenseModal", Model)
+@await Html.PartialAsync("_TowingExpenseScripts", Model)
+
+<style>
+.payment-info-group {
+    background: #f7f8fa;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px 0 rgba(80,102,144,0.07);
+    padding: 32px 36px;
+    margin: 24px 0;
+    position: relative;
+}
+.payment-label {
+    color: #8b95b6;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.payment-value {
+    color: #000000;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.payment-actions {
+    z-index: 2;
+}
+@@media (max-width: 900px) {
+    .payment-info-group {
+        padding: 18px 8px;
+    }
+    .payment-actions {
+        position: static !important;
+        margin-top: 12px;
+        margin-right: 0;
+    }
+}
+</style>
+

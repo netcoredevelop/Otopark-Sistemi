@@ -13,6 +13,9 @@ public class Vehicle : BaseEntity<int>
     public long? MuhammenBedeli { get; set; }
     public string? Description { get; set; }
 
+    public bool IsForSale { get; set; } = false;
+    public DateTime? SaleDate { get; set; }
+    public decimal? SalePrice { get; set; } 
 
     public virtual Branch Branch { get; set; } = null!;
     public int BranchId { get; set; }
@@ -47,4 +50,5 @@ public class Vehicle : BaseEntity<int>
     public virtual ICollection<EnforcementRecord> EnforcementRecords { get; set; } = new List<EnforcementRecord>();
     public virtual ICollection<VehicleImage> Images { get; set; } = new List<VehicleImage>();
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

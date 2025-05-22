@@ -26,4 +26,10 @@ public class AuditLogController : Controller
             return NotFound();
         return View(log);
     }
+
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _auditLogService.Delete(id);
+        return RedirectToAction(nameof(Index));
+    }
 }

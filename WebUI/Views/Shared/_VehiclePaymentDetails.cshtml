@@ -1,0 +1,188 @@
+@model WebUI.Models.Vehicle.VehiclePaymentDetailViewModel
+
+@{
+    // AntiForgeryToken for AJAX
+    @Html.AntiForgeryToken()
+}
+
+<div class="info-group payment-info-group d-flex flex-wrap justify-content-between align-items-start position-relative">
+    <div style="width:100%">
+        <h4 class="section-title mb-4">Ödeme Bilgileri</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Ödediği Toplam Tutar</div>
+                <div class="payment-value">@Model.Amount.ToString("N2") ₺</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Ödemenin Alındığı Tarih</div>
+                <div class="payment-value">@Model.PaymentDate.ToString("dd.MM.yyyy")</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Araçın Kaç Gün Kaldığı</div>
+                <div class="payment-value">@Model.TotalDays gün</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="payment-label">Açıklama</div>
+                <div class="payment-value">@Model.Description</div>
+            </div>
+        </div>
+    </div>
+    <div class="payment-actions ms-auto d-flex gap-2 position-absolute top-0 end-0 mt-4 me-4">
+        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPaymentModal">
+            <i class="fas fa-edit"></i> Düzenle
+        </button>
+        <button id="deletePaymentBtn" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePaymentModal">
+            <i class="fas fa-trash"></i> Sil
+        </button>
+    </div>
+</div>
+
+<!-- Silme Onay Modali -->
+<div class="modal fade" id="deletePaymentModal" tabindex="-1" aria-labelledby="deletePaymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deletePaymentModalLabel">Ödeme Kaydını Sil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bu ödeme kaydını silmek istediğinize emin misiniz?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-danger" id="confirmDeletePaymentBtn">Sil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Düzenleme Modalı -->
+<div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editPaymentForm" asp-action="UpdatePayment" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPaymentModalLabel">Ödeme Bilgilerini Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="vehicleId" value="@ViewBag.VehicleId" />
+                    <div class="mb-3">
+                        <label class="form-label">Ödediği Toplam Tutar</label>
+                        <input type="number" class="form-control" name="amount" value="@Model.Amount" step="0.01" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ödemenin Alındığı Tarih</label>
+                        <input type="date" class="form-control" name="paymentDate" value="@Model.PaymentDate.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Araçın Kaç Gün Kaldığı</label>
+                        <input type="number" class="form-control" name="totalDays" value="@Model.TotalDays" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama</label>
+                        <textarea class="form-control" name="description">@Model.Description</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-warning">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on('click', '#deletePaymentBtn', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Ödeme kaydı silinecek!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Vehicle/DeletePayment',
+                        type: 'POST',
+                        data: {
+                            vehicleId: '@ViewBag.VehicleId',
+                            __RequestVerificationToken: $('input[name=__RequestVerificationToken]').val()
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Başarılı!', 'Ödeme kaydı silindi.', 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('Hata!', response.message || 'Bir hata oluştu.', 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Hata!', 'İşlem sırasında bir hata oluştu.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+<script>
+
+    $('#editPaymentForm').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire('Başarılı!', 'Ödeme bilgileri güncellendi.', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Hata!', response.message || 'Bir hata oluştu.', 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Hata!', 'İşlem sırasında bir hata oluştu.', 'error');
+            }
+        });
+    });
+</script>
+}
+
+<style>
+.payment-info-group {
+    background: #f7f8fa;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px 0 rgba(80,102,144,0.07);
+    padding: 32px 36px;
+    margin: 24px 0;
+    position: relative;
+}
+.payment-label {
+    color: #8b95b6;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.payment-value {
+    color: #000000;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+.payment-actions {
+    z-index: 2;
+}
+@@media (max-width: 900px) {
+    .payment-info-group {
+        padding: 18px 8px;
+    }
+    .payment-actions {
+        position: static !important;
+        margin-top: 12px;
+        margin-right: 0;
+    }
+}
+</style> 

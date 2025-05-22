@@ -72,7 +72,8 @@ public class BranchController : Controller
             {
                 var branch = new Branch
                 {
-                    Name = model.Name
+                    Name = model.Name,
+                    Capacity = model.Capacity
                 };
 
                 await _branchService.AddAsync(branch);
@@ -104,7 +105,8 @@ public class BranchController : Controller
             var model = new BranchEditViewModel
             {
                 Id = branch.Id,
-                Name = branch.Name
+                Name = branch.Name,
+                Capacity = branch.Capacity.Value
             };
 
             return View(model);

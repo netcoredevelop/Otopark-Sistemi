@@ -1,4 +1,124 @@
-﻿.card {
+﻿/* Karanlık Tema için */
+
+
+[data-theme-version="dark"] .plate-number::before {
+    color: white;
+}
+[data-theme-version="dark"] {
+    background: #181a20;
+    color: #f1f1f1;
+}
+
+    [data-theme-version="dark"] .card,
+    [data-theme-version="dark"] .card-header,
+    [data-theme-version="dark"] .card-body {
+        background: #23242a !important;
+        color: #f1f1f1;
+        border-color: #23242a !important;
+    }
+
+    [data-theme-version="dark"] .section-title {
+        color: #fff;
+        border-bottom: 2px solid #23242a;
+    }
+    [data-theme-version="dark"] .info-group {
+        background: #17171e;
+    }
+
+    [data-theme-version="dark"] .form-label {
+        color: #b0b3b8;
+    }
+
+    [data-theme-version="dark"] .form-control,
+    [data-theme-version="dark"] .form-select,
+    [data-theme-version="dark"] .select2-container--default .select2-selection--single,
+    [data-theme-version="dark"] .flatpickr-input {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+        border-color: #343a40 !important;
+    }
+
+        [data-theme-version="dark"] .form-control:focus,
+        [data-theme-version="dark"] .form-select:focus,
+        [data-theme-version="dark"] .flatpickr-input:focus {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+        }
+
+    [data-theme-version="dark"] .plate-display {
+        background: linear-gradient(135deg, #23242a 0%, #181a20 100%) !important;
+    }
+
+    [data-theme-version="dark"] .plate-number {
+        background: #181a20 !important;
+        border: 2px solid #fff !important;
+    }
+
+    [data-theme-version="dark"] .plate-input {
+        background: transparent !important;
+        color: #fff !important;
+        border: none;
+    }
+
+    [data-theme-version="dark"] .select2-container--default .select2-selection--single {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+        border-color: #343a40 !important;
+    }
+
+        [data-theme-version="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #f1f1f1 !important;
+        }
+
+    [data-theme-version="dark"] .select2-dropdown {
+        background: #23242a !important;
+        color: #f1f1f1 !important;
+    }
+
+    [data-theme-version="dark"] .select2-results__option--highlighted {
+        background: #0d6efd !important;
+        color: #fff !important;
+    }
+
+    [data-theme-version="dark"] .flatpickr-calendar {
+        background: #23242a !important;
+        color: #f1f1f1 !important;
+    }
+
+    [data-theme-version="dark"] .flatpickr-months,
+    [data-theme-version="dark"] .flatpickr-time {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+    }
+
+    [data-theme-version="dark"] .flatpickr-day {
+        color: #f1f1f1 !important;
+    }
+
+        [data-theme-version="dark"] .flatpickr-day.selected,
+        [data-theme-version="dark"] .flatpickr-day.selected:hover {
+            background: #0d6efd !important;
+            color: #fff !important;
+        }
+
+    [data-theme-version="dark"] .btn-primary {
+        background: #0d6efd !important;
+        border-color: #0d6efd !important;
+    }
+
+    [data-theme-version="dark"] .btn-secondary {
+        background: #343a40 !important;
+        border-color: #343a40 !important;
+    }
+
+    [data-theme-version="dark"] .alert-danger {
+        background: #3a2323 !important;
+        color: #fff !important;
+        border-color: #a94442 !important;
+    }
+
+
+.card {
     border: none;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
     border-radius: 15px;

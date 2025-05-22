@@ -107,6 +107,18 @@ namespace WebUI.Auth
             { "Role_Edit", "Rol Düzenleme" },
             { "Role_Remove", "Rol Silme" },
             { "Role_View", "Rolleri Görüntüleme" },
+
+            // İşlem ile ilgili rol görüntüleme isimleri
+            { "Transaction_Add", "Ödeme Ekleme" },
+            { "Transaction_Edit", "Ödeme Düzenleme" },
+            { "Transaction_Remove", "Ödeme Silme" },
+            { "Transaction_View", "Ödemeleri Görüntüleme" },
+
+            // İşlem kategorisi ile ilgili rol görüntüleme isimleri
+            { "TransactionCategory_Add", "Ödeme Kategorisi Ekleme" },
+            { "TransactionCategory_Edit", "Ödeme Kategorisi Düzenleme" },
+            { "TransactionCategory_Remove", "Ödeme Kategorisi Silme" },
+            { "TransactionCategory_View", "Ödeme Kategorilerini Görüntüleme" },
             
             // Admin rolü
             { "Admin", "Sistem Yöneticisi" }

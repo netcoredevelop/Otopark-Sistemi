@@ -71,8 +71,7 @@ public class AuditLogActionFilter : ActionFilterAttribute
                     var keyProp = elementType.GetProperty("Id");
                     var oldEntity = dbSet.Cast<object>()
                         .ToList()
-                        .FirstOrDefault(x => keyProp.GetValue(x) != null && keyProp.GetValue(x).ToString() == entityId);
-                    if (oldEntity != null)
+                        .FirstOrDefault(x => keyProp.GetValue(x) != null && keyProp.GetValue(x).ToString() == entityId); if (oldEntity != null)
                         oldData = JsonConvert.SerializeObject(oldEntity);
                 }
             }

@@ -1,0 +1,38 @@
+@model WebUI.Models.Vehicle.TowingExpenseViewModel
+
+<div class="modal fade" id="editTowingExpenseModal" tabindex="-1" aria-labelledby="editTowingExpenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTowingExpenseModalLabel">Çekici Gider Bilgilerini Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editTowingExpenseForm">
+                <input type="hidden" name="id" value="@Model.VehicleId" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editTowingDate" class="form-label">Çekici Tarihi</label>
+                        <input type="datetime-local" class="form-control" id="editTowingDate" name="towingDate" value="@Model.TowingDate.ToString("yyyy-MM-ddTHH:mm")" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAmount" class="form-label">Tutar</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="editAmount" name="amount" value="@Model.Amount" step="0.01" required>
+                            <span class="input-group-text">₺</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="editDescription" name="description" rows="2">@Model.Description</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

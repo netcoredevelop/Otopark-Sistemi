@@ -1,0 +1,378 @@
+@model IEnumerable<Domain.Entities.TransactionCategory>
+
+@{
+    ViewData["Title"] = "Gelir-Gider Kalemleri";
+}
+
+<style>
+    [data-theme-version="dark"] .card,
+    [data-theme-version="dark"] .category-table,
+    [data-theme-version="dark"] .filter-form {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+    }
+
+    [data-theme-version="dark"] .category-table th {
+        background: #23242a !important;
+        color: #f1f1f1 !important;
+        border-bottom: 2px solid #23242a !important;
+        border-right: 1px solid #23242a !important;
+    }
+
+    [data-theme-version="dark"] .category-table td {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+        border-bottom: 1px solid #23242a !important;
+    }
+
+    [data-theme-version="dark"] .filter-form {
+        background: #23242a !important;
+        border: 1px solid #23242a !important;
+    }
+
+    [data-theme-version="dark"] .filter-form .form-label {
+        color: white;
+    }
+
+    [data-theme-version="dark"] .filter-form .form-control,
+    [data-theme-version="dark"] .filter-form .form-select {
+        color: #f1f1f1 !important;
+        background: #181a20 !important;
+        border: 1px solid #23242a !important;
+    }
+
+    [data-theme-version="dark"] .filter-form .form-control:focus,
+    [data-theme-version="dark"] .filter-form .form-select:focus {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25) !important;
+        background: #23242a !important;
+        color: #fff !important;
+    }
+
+    .category-table {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 32px;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #e3e6f0;
+    }
+
+    .category-table th {
+        background: #f4f6fa;
+        color: #2a2e36;
+        font-weight: 600;
+        border-bottom: 2px solid #e3e6f0;
+        padding: 0.85rem 1rem;
+        text-align: left;
+        border-right: 1px solid #e3e6f0;
+    }
+
+    .category-table th:last-child {
+        border-right: none;
+    }
+
+    .category-table td {
+        border-bottom: 1px solid #e3e6f0;
+        padding: 0.75rem 1rem;
+        color: #3a3b45;
+        background: #fff;
+    }
+
+    .category-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .category-table tr:hover td {
+        background: #f8fafc;
+    }
+
+    .filter-form {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-form .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .filter-form .form-control,
+    .filter-form .form-select {
+        border: 1px solid #ced4da;
+    }
+
+    .filter-form .form-control:focus,
+    .filter-form .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .nav-tabs .nav-link {
+        color: #495057;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        background: none;
+        border-bottom: 2px solid #0d6efd;
+    }
+
+    .nav-tabs .nav-link:hover {
+        border: none;
+        color: #0d6efd;
+    }
+
+    .badge-income {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-expense {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-add-income {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
+
+    .btn-add-income:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+        color: white;
+    }
+
+    .btn-add-expense {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: white;
+    }
+
+    .btn-add-expense:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+        color: white;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Gelir-Gider Kalemleri</h4>
+            </div>
+        </div>
+        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <a asp-action="Create" asp-route-type="Gelir" class="btn btn-add-income me-2">
+                <i class="fa fa-plus"></i> Yeni Gelir Kalemi
+            </a>
+            <a asp-action="Create" asp-route-type="Gider" class="btn btn-add-expense">
+                <i class="fa fa-plus"></i> Yeni Gider Kalemi
+            </a>
+        </div>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                                Tümü
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income" type="button" role="tab">
+                                Gelir Kalemleri
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense" type="button" role="tab">
+                                Gider Kalemleri
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="categoryTabsContent">
+                        <div class="tab-pane fade show active" id="all" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table category-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ad</th>
+                                            <th>Açıklama</th>
+                                            <th>Tip</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.Name</td>
+                                                <td>@item.Description</td>
+                                                <td>
+                                                    <span class="badge @(item.Type == Domain.Entities.TransactionType.Gelir ? "badge-income" : "badge-expense")">
+                                                        @(item.Type == Domain.Entities.TransactionType.Gelir ? "Gelir" : "Gider")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge @(item.IsActive ? "badge-success" : "badge-danger")">
+                                                        @(item.IsActive ? "Aktif" : "Pasif")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu kalemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="income" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table category-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ad</th>
+                                            <th>Açıklama</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Where(c => c.Type == Domain.Entities.TransactionType.Gelir))
+                                        {
+                                            <tr>
+                                                <td>@item.Name</td>
+                                                <td>@item.Description</td>
+                                                <td>
+                                                    <span class="badge @(item.IsActive ? "badge-success" : "badge-danger")">
+                                                        @(item.IsActive ? "Aktif" : "Pasif")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu kalemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="expense" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table category-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ad</th>
+                                            <th>Açıklama</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Where(c => c.Type == Domain.Entities.TransactionType.Gider))
+                                        {
+                                            <tr>
+                                                <td>@item.Name</td>
+                                                <td>@item.Description</td>
+                                                <td>
+                                                    <span class="badge @(item.IsActive ? "badge-success" : "badge-danger")">
+                                                        @(item.IsActive ? "Aktif" : "Pasif")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu kalemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tab değiştiğinde URL'i güncelle
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const target = $(e.target).data('bs-target');
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', target.replace('#', ''));
+                window.history.pushState({}, '', url);
+            });
+
+            // Sayfa yüklendiğinde URL'deki tab'ı aktif et
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                $(`button[data-bs-target="#${tab}"]`).tab('show');
+            }
+        });
+    </script>
+} 

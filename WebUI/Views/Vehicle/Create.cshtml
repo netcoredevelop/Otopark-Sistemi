@@ -16,6 +16,13 @@
         </div>
     </div>
     <div class="card-body">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -165,7 +172,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="info-group mt-4">
                 <h4 class="section-title">Ek Bilgiler</h4>
                 <div class="mb-3">
@@ -180,6 +186,8 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
             </div>
+
+
 
             <div class="mb-3 d-flex justify-content-end gap-2">
                 <button type="submit" class="btn btn-primary btn-sm" style="min-width: 120px;">
@@ -266,7 +274,6 @@
         }
     </style>
 }
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -302,15 +309,15 @@
                 width: '100%'
             });
 
-            // Flatpickr ayarları
             flatpickr("#EntryDate", {
                 enableTime: true,
-                dateFormat: "d.m.Y - H:i",
+                dateFormat: "Y-m-d H:i",
+                altInput: true,
+                altFormat: "d.m.Y H:i",
                 time_24hr: true,
                 locale: "tr",
                 minuteIncrement: 1,
                 allowInput: true,
-                defaultDate: new Date(),
                 placeholder: "Tarih ve saat seçiniz...",
                 position: "auto",
                 monthSelectorType: "static",
@@ -321,7 +328,9 @@
 
             flatpickr("#ExitDate", {
                 enableTime: true,
-                dateFormat: "d.m.Y - H:i",
+                dateFormat: "Y-m-d H:i",
+                altInput: true,
+                altFormat: "d.m.Y H:i",
                 time_24hr: true,
                 locale: "tr",
                 minuteIncrement: 1,
@@ -333,6 +342,20 @@
                 prevArrow: "<i class='fas fa-chevron-left'></i>",
                 nextArrow: "<i class='fas fa-chevron-right'></i>"
             });
+
+            // Satışa çıktı checkbox'ı değiştiğinde
+            $('#isForSale').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#saleDetails').slideDown();
+                } else {
+                    $('#saleDetails').slideUp();
+                }
+            });
+
+            // Sayfa yüklendiğinde mevcut durumu kontrol et
+            if ($('#isForSale').is(':checked')) {
+                $('#saleDetails').show();
+            }
         });
 
         // Plaka formatı için fonksiyon

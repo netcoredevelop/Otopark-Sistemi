@@ -1,0 +1,445 @@
+@{
+    ViewData["Title"] = "Anasayfa";
+    Layout = "_PublicLayout";
+}
+
+<!-- Hero Section -->
+<section id="hero" class="hero-section">
+    <div class="swiper heroSwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold text-white">Profesyonel Otopark Yönetim Sistemleri</h1>
+                    <p class="lead text-white">Güvenli, teknolojik ve verimli park alanları</p>
+                    <div class="hero-buttons">
+                        <a href="#about" class="btn btn-primary btn-lg">Keşfedin</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">İletişime Geçin</a>
+                    </div>
+                </div>
+                <img src="~/images/slider-1.jpeg" alt="Hero 1" class="hero-image" />
+            </div>
+            <div class="swiper-slide">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold text-white">7/24 Güvenlik ve Kontrol</h1>
+                    <p class="lead text-white">En son teknoloji ile araçlarınız güvende</p>
+                    <div class="hero-buttons">
+                        <a href="#services" class="btn btn-primary btn-lg">Hizmetlerimiz</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">İletişime Geçin</a>
+                    </div>
+                </div>
+                <img src="~/images/slider-1.jpeg" alt="Hero 2" class="hero-image" />
+            </div>
+            <div class="swiper-slide">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold text-white">Akıllı Otopark Çözümleri</h1>
+                    <p class="lead text-white">Modern ve kullanıcı dostu sistemler</p>
+                    <div class="hero-buttons">
+                        <a href="#solutions" class="btn btn-primary btn-lg">Çözümlerimiz</a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg">İletişime Geçin</a>
+                    </div>
+                </div>
+                <img src="~/images/slider-1.jpeg" alt="Hero 3" class="hero-image" />
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-6" data-aos="fade-up">
+                <div class="stat-item">
+                    <i class="fas fa-building"></i>
+                    <h3>15+</h3>
+                    <p>Şube</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-item">
+                    <i class="fas fa-car"></i>
+                    <h3>50K+</h3>
+                    <p>Araç Kapasitesi</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <h3>100K+</h3>
+                    <p>Mutlu Müşteri</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-item">
+                    <i class="fas fa-award"></i>
+                    <h3>20+</h3>
+                    <p>Yıllık Deneyim</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="about-image-wrapper">
+                    <img src="~/images/about.jpg" alt="Hakkımızda" class="img-fluid rounded-3 shadow-lg" />
+                    <div class="experience-badge">
+                        <span class="number">20+</span>
+                        <span class="text">Yıllık Deneyim</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="section-header">
+                    <span class="section-subtitle">Hakkımızda</span>
+                    <h2 class="section-title">Profesyonel Otopark Yönetimi</h2>
+                    <div class="divider"></div>
+                </div>
+                <p class="lead mb-4">
+                    2003 yılından bu yana, müşterilerimize en iyi hizmeti sunmak için çalışıyoruz. Modern teknolojimiz ve uzman kadromuzla araçlarınızı güvenle emanet edebilirsiniz.
+                </p>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>Güvenlik</h4>
+                        <p>7/24 güvenlik kameraları ve kontrol</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-clock"></i>
+                        <h4>Hızlı Hizmet</h4>
+                        <p>Otomatik giriş-çıkış sistemleri</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Stratejik Konum</h4>
+                        <p>Şehir merkezlerinde kolay erişim</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-credit-card"></i>
+                        <h4>Kolay Ödeme</h4>
+                        <p>Çoklu ödeme seçenekleri</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services-section">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-subtitle">Hizmetlerimiz</span>
+            <h2 class="section-title">Profesyonel Çözümler</h2>
+            <div class="divider mx-auto"></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3>Otopark Yönetimi</h3>
+                    <p>Modern ve güvenli park alanları ile araçlarınız güvende.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> 7/24 Güvenlik</li>
+                        <li><i class="fas fa-check"></i> Otomatik Sistemler</li>
+                        <li><i class="fas fa-check"></i> Online Rezervasyon</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Teknik Servis</h3>
+                    <p>Profesyonel ekibimizle araç bakım ve onarım hizmetleri.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Periyodik Bakım</li>
+                        <li><i class="fas fa-check"></i> Acil Onarım</li>
+                        <li><i class="fas fa-check"></i> Yedek Parça</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobil Uygulama</h3>
+                    <p>Akıllı telefonunuzdan otopark yönetimi ve ödeme işlemleri.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Online Ödeme</li>
+                        <li><i class="fas fa-check"></i> Rezervasyon</li>
+                        <li><i class="fas fa-check"></i> Araç Takibi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Solutions Section -->
+<section id="solutions" class="solutions-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="section-header">
+                    <span class="section-subtitle">Çözümlerimiz</span>
+                    <h2 class="section-title">Akıllı Otopark Sistemleri</h2>
+                    <div class="divider"></div>
+                </div>
+                <div class="solutions-content">
+                    <div class="solution-item">
+                        <div class="solution-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="solution-text">
+                            <h4>QR Kod Sistemi</h4>
+                            <p>Hızlı giriş-çıkış için QR kod teknolojisi</p>
+                        </div>
+                    </div>
+                    <div class="solution-item">
+                        <div class="solution-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="solution-text">
+                            <h4>Otomatik Ödeme</h4>
+                            <p>Kredi kartı ile otomatik ödeme sistemi</p>
+                        </div>
+                    </div>
+                    <div class="solution-item">
+                        <div class="solution-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="solution-text">
+                            <h4>Plaka Tanıma</h4>
+                            <p>Otomatik plaka tanıma sistemi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="solutions-image">
+                    <img src="~/images/solutions.jpg" alt="Çözümlerimiz" class="img-fluid rounded-3 shadow-lg" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Branches Section -->
+<section id="branches" class="branches-section">
+    <div class="container">
+        <div class="section-header text-center" data-aos="fade-up">
+            <span class="section-subtitle">Şubelerimiz</span>
+            <h2 class="section-title">Stratejik Konumlar</h2>
+            <div class="divider mx-auto"></div>
+            <p class="lead">Şehir merkezlerinde stratejik konumlarda hizmetinizdeyiz</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="branch-card">
+                    <div class="branch-image">
+                        <img src="~/images/branch-1.jpg" alt="Merkez Şube" class="img-fluid" />
+                        <div class="branch-overlay">
+                            <span class="branch-status">7/24 Açık</span>
+                        </div>
+                    </div>
+                    <div class="branch-content">
+                        <h3>Merkez Şube</h3>
+                        <div class="branch-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Atatürk Caddesi No:123</p>
+                            <p><i class="fas fa-phone"></i> (0212) 123 45 67</p>
+                            <p><i class="fas fa-clock"></i> 7/24 Açık</p>
+                        </div>
+                        <div class="branch-features">
+                            <span><i class="fas fa-wifi"></i> Ücretsiz Wi-Fi</span>
+                            <span><i class="fas fa-car"></i> 500 Araç Kapasitesi</span>
+                        </div>
+                        <div class="branch-map">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.4439286657!2d28.977835315414!3d41.037003979298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7650656bd63%3A0x8ca058b28c20b6c3!2zVGFrc2ltIE1leWRhbsSxLCBHw7xtw7zFn3N1eXUsIDM0NDM1IEJleW_En2x1L8Swc3RhbmJ1bA!5e0!3m2!1str!2str!4v1647881234567!5m2!1str!2str" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="branch-card">
+                    <div class="branch-image">
+                        <img src="~/images/branch-2.jpg" alt="Kadıköy Şube" class="img-fluid" />
+                        <div class="branch-overlay">
+                            <span class="branch-status">7/24 Açık</span>
+                        </div>
+                    </div>
+                    <div class="branch-content">
+                        <h3>Kadıköy Şube</h3>
+                        <div class="branch-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Bağdat Caddesi No:456</p>
+                            <p><i class="fas fa-phone"></i> (0216) 234 56 78</p>
+                            <p><i class="fas fa-clock"></i> 7/24 Açık</p>
+                        </div>
+                        <div class="branch-features">
+                            <span><i class="fas fa-wifi"></i> Ücretsiz Wi-Fi</span>
+                            <span><i class="fas fa-car"></i> 400 Araç Kapasitesi</span>
+                        </div>
+                        <div class="branch-map">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.2665397897!2d29.063837315413!3d41.033002979298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7a24975fe5d%3A0x4ca8ec5dce8fa3e!2zS2FkxLFrw7Z5LCDEsHN0YW5idWw!5e0!3m2!1str!2str!4v1647881234567!5m2!1str!2str" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="branch-card">
+                    <div class="branch-image">
+                        <img src="~/images/branch-1.jpg" alt="Beşiktaş Şube" class="img-fluid" />
+                        <div class="branch-overlay">
+                            <span class="branch-status">7/24 Açık</span>
+                        </div>
+                    </div>
+                    <div class="branch-content">
+                        <h3>Beşiktaş Şube</h3>
+                        <div class="branch-info">
+                            <p><i class="fas fa-map-marker-alt"></i> Barbaros Bulvarı No:789</p>
+                            <p><i class="fas fa-phone"></i> (0212) 345 67 89</p>
+                            <p><i class="fas fa-clock"></i> 7/24 Açık</p>
+                        </div>
+                        <div class="branch-features">
+                            <span><i class="fas fa-wifi"></i> Ücretsiz Wi-Fi</span>
+                            <span><i class="fas fa-car"></i> 300 Araç Kapasitesi</span>
+                        </div>
+                        <div class="branch-map">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3008.4439286657!2d29.007835315414!3d41.042003979298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab7a24975fe5d%3A0x4ca8ec5dce8fa3e!2zQmVzxLFrdGHFnywgxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1647881234567!5m2!1str!2str" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="section-header">
+                    <span class="section-subtitle">İletişim</span>
+                    <h2 class="section-title">Bizimle İletişime Geçin</h2>
+                    <div class="divider"></div>
+                </div>
+                <p class="lead mb-4">Profesyonel ekibimiz size yardımcı olmaktan mutluluk duyacaktır.</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telefon</h4>
+                            <p>(0212) 123 45 67</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>E-posta</h4>
+                            <p>info@otoparksistemi.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Adres</h4>
+                            <p>Atatürk Caddesi No:123, İstanbul</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="contact-form-wrapper">
+                    <form class="contact-form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" placeholder="Adınız">
+                                    <label for="name">Adınız</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" placeholder="E-posta">
+                                    <label for="email">E-posta</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="subject" placeholder="Konu">
+                                    <label for="subject">Konu</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="message" placeholder="Mesajınız" style="height: 150px"></textarea>
+                                    <label for="message">Mesajınız</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">Gönder</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Initialize Swiper
+        var swiper = new Swiper(".heroSwiper", {
+            spaceBetween: 0,
+            centeredSlides: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+} 

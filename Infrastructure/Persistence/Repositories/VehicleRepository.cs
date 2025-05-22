@@ -9,11 +9,11 @@ namespace Persistence.Repositories;
 
 public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
 {
-    public VehicleRepository(ApplicationDbContext context, ICurrentUserService currentUserService) 
+    public VehicleRepository(ApplicationDbContext context, ICurrentUserService currentUserService)
         : base(context, currentUserService)
     {
     }
-    
+
     public IQueryable<Vehicle> GetQueryable()
     {
         return _dbSet
@@ -29,7 +29,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
             .Include(v => v.LinkingReason)
             .Include(v => v.ParkLocation);
     }
-    
+
     public override async Task<Vehicle?> GetByIdAsync(int id)
     {
         return await _dbSet
@@ -42,6 +42,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
             .Include(v => v.KeyLocation)
             .Include(v => v.LinkingRegion)
             .Include(v => v.LinkingReason)
+            .Include(v => v.Transactions)
             .Include(v => v.ParkLocation)
             .Include(v => v.EnforcementRecords)
                 .ThenInclude(er => er.EnforcementOffice)
@@ -49,7 +50,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
             .Include(v => v.Documents)
             .FirstOrDefaultAsync(v => v.Id == id);
     }
-    
+
     public override async Task<IEnumerable<Vehicle>> GetAllAsync()
     {
         return await _dbSet
@@ -82,7 +83,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
     public async Task<PaginatedList<Vehicle>> GetPagedAsync(Expression<Func<Vehicle, bool>> predicate, int pageIndex, int pageSize, params Expression<Func<Vehicle, object>>[] includes)
     {
         var query = GetQueryable();
-        
+
         // Apply predicate
         query = query.Where(predicate);
 
@@ -94,7 +95,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
 
         return await PaginatedList<Vehicle>.CreateAsync(query, pageIndex, pageSize);
     }
-    
+
     public override void Update(Vehicle entity)
     {
         var existingEntity = _dbSet
@@ -118,7 +119,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
         {
             // Update scalar properties
             _context.Entry(existingEntity).CurrentValues.SetValues(entity);
-            
+
             // Update foreign keys
             existingEntity.BranchId = entity.BranchId;
             existingEntity.VehicleTypeId = entity.VehicleTypeId;
@@ -165,7 +166,7 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
             _dbSet.Update(existingEntity);
         }
     }
-    
+
     public async Task<IEnumerable<Vehicle>> GetDeletedVehiclesAsync()
     {
         return await _dbSet
@@ -182,11 +183,17 @@ public class VehicleRepository : Repository<Vehicle, int>, IVehicleRepository
             .Include(v => v.ParkLocation)
             .ToListAsync();
     }
-    
+
+    public bool? GetByPlateNumberAsync(string plateNumber)
+    {
+        var boolData = _dbSet.Any(x => x.PlateNumber == plateNumber && x.ExitDate==null);
+        return boolData;
+    }
+
     // Vehicle'a özgü ek metod implementasyonları buraya eklenebilir
     // Örneğin:
     // public async Task<IEnumerable<Vehicle>> GetVehiclesByBrandAsync(int brandId)
     // {
     //     return await FindAsync(v => v.VehicleBrandId == brandId);
     // }
-} 
+}

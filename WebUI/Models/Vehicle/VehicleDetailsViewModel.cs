@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
 
 namespace WebUI.Models.Vehicle;
 
@@ -43,6 +45,7 @@ public class VehicleDetailsViewModel
 
     [Display(Name = "Araç Türü")]
     public string VehicleTypeName { get; set; } = default!;
+    public int? VehicleTypeId { get; set; }
 
     [Display(Name = "Araç Markası")]
     public string VehicleBrandName { get; set; } = default!;
@@ -74,4 +77,17 @@ public class VehicleDetailsViewModel
     public List<DocumentViewModel>? Documents { get; set; }
     public List<VehicleImageViewModel>? Images { get; set; }
     public List<EnforcementRecordViewModel>? EnforcementRecords { get; set; }
+    public VehiclePaymentDetailViewModel? PaymentDetail { get; set; }
+    public TowingExpenseViewModel TowingExpense { get; set; }
+
+    [Display(Name = "Satışa Çıktı")]
+    public bool IsForSale { get; set; }
+
+    [Display(Name = "Satışa Çıkış Tarihi")]
+    [DataType(DataType.Date)]
+    public DateTime? SaleDate { get; set; }
+
+    [Display(Name = "Satış Fiyatı")]
+    [DataType(DataType.Currency)]
+    public decimal? SalePrice { get; set; }
 } 

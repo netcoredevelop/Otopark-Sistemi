@@ -11,10 +11,13 @@ services:
       - "1433:1433"
     networks:
       - otopark-network
-    # NOT: Volume kullanılmıyor, her başlatmada DB sıfırlanır
-    # init.sql dosyasını otomatik yüklemek için bind mount yapabilirsin:
     volumes:
       - ./Infrastructure/Data/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # Ubuntu için gerekli ayarlar
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
 
   migration:
     build:

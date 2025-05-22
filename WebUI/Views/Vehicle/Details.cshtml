@@ -21,20 +21,57 @@
     var canImageRecordsView = userRoles.Any(r => r == "Admin" || r == "VehicleImage_View");
     var canImageRecordsRemove = userRoles.Any(r => r == "Admin" || r == "VehicleImage_Remove");
 }
-
+@{
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    var targetUrl = !string.IsNullOrEmpty(returnUrl)
+        ? returnUrl
+        : Url.Action("Index", "Vehicle");
+}
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
             <h3 class="card-title">Araç Detayları</h3>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            @if (!Model.ExitDate.HasValue)
+
+            @if (!Model.ExitDate.HasValue || !Model.PaymentDetail.IsPay || !Model.TowingExpense.IsPaid)
             {
-                <button type="button" class="btn btn-success btn-sm" onclick="deliverVehicle()">
-                    <i class="fas fa-handshake"></i> Teslim Et
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        İşlemler
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if (!Model.ExitDate.HasValue)
+                        {
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);" onclick="deliverVehicle()">
+                                    <i class="fas fa-handshake"></i> Teslim Et
+                                </a>
+                            </li>
+                        }
+                        @if (!Model.IsForSale)
+                        {
+                            <li>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#saleModal">
+                                    <i class="fas fa-tag"></i> Satışa Çıkart
+                                </a>
+                            </li>
+                        }
+
+                        @if (!Model.TowingExpense.IsPaid)
+                        {
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#towingExpenseModal">
+                                    <i class="fas fa-truck"></i> Çekici Gider Kaydı
+                                </a>
+                            </li>
+                            
+                        }
+
+                    </ul>
+                </div>
             }
-            <a asp-action="Index" class="btn btn-secondary btn-sm">
+            <a href="@targetUrl" class="btn btn-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Listeye Dön
             </a>
             @if (canEdit)
@@ -51,12 +88,131 @@
             }
         </div>
     </div>
+
+    <!-- Satış Modal -->
+    <div class="modal fade" id="saleModal" tabindex="-1" aria-labelledby="saleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saleModalLabel">Araç Satışa Çıkart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="saleForm" asp-action="SetForSale" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="mb-3">
+                            <label for="saleDate" class="form-label">Satışa Çıkış Tarihi</label>
+                            <input type="date" class="form-control" id="saleDate" name="saleDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="salePrice" class="form-label">Satış Fiyatı</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="salePrice" name="salePrice" step="0.01" required>
+                                <span class="input-group-text">₺</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-tag"></i> Satışa Çıkart
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ödeme Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Ödeme Bilgileri</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="paymentForm" asp-action="SavePayment" method="post">
+
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div id="exitDateError" class="invalid-feedback" style="display: none;">
+                                Çıkış tarihi giriş tarihinden önce olamaz!
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Giriş Tarihi</label>
+                                <input type="text" class="form-control" value="@Model.EntryDate.ToString("dd.MM.yyyy HH:mm")" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Çıkış Tarihi</label>
+                                <input type="datetime-local" class="form-control" id="exitDate" name="exitDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Toplam Gün</label>
+                                <input type="text" class="form-control" id="totalDays" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Günlük Ücret</label>
+                                <input type="text" class="form-control" id="dailyPrice" readonly>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Toplam Tutar</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control total-amount" id="totalAmount" name="totalAmount" readonly>
+                                    <span class="input-group-text">₺</span>
+                                </div>
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="editTotalAmountCheck">
+                                    <label class="form-check-label" for="editTotalAmountCheck">Tutarı düzenle</label>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Ödeme Tarihi</label>
+                                <input type="datetime-local" class="form-control" id="paymentDate" name="paymentDate" required>
+                                <div id="paymentDateError" class="invalid-feedback" style="display: none;">
+                                    Ödeme tarihi bugünden ileri olamaz!
+                                </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Açıklama</label>
+                                <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-3" id="savePaymentBtn" disabled>Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="card-body">
         <div class="plate-display">
             <div class="plate-number">
                 <div class="plate-text">@Model.PlateNumber</div>
             </div>
         </div>
+        @if (Model.PaymentDetail != null && Model.PaymentDetail.IsPay)
+        {
+            <div class="info-group mt-4">
+                <h4 class="section-title">Ödeme Bilgileri</h4>
+                <div class="row">
+                    <div class="col-12">
+                        @await Html.PartialAsync("_VehiclePaymentDetails", Model.PaymentDetail)
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.TowingExpense != null && Model.TowingExpense.IsPaid)
+        {
+            <div class="row">
+                <div class="col-12">
+                    @await Html.PartialAsync("_VehicleTowingExpenseDetails", Model.TowingExpense)
+                </div>
+            </div>
+        }
 
         <div class="row mb-4">
             <div class="col-md-6">
@@ -212,6 +368,39 @@
             </div>
         }
 
+        @if (Model.IsForSale)
+        {
+            <div class="info-group mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="section-title mb-0">Satış Bilgileri</h4>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSaleModal">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteSale()">
+                            <i class="fas fa-trash"></i> Satışı İptal Et
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-label">@Html.DisplayNameFor(model => model.SaleDate)</div>
+                        <div class="info-value">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            @(Model.SaleDate?.ToString("dd.MM.yyyy") ?? "-")
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label">@Html.DisplayNameFor(model => model.SalePrice)</div>
+                        <div class="info-value">
+                            <i class="fas fa-tag me-2"></i>
+                            @(Model.SalePrice?.ToString("N2") ?? "-") ₺
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         @if (canEnforcementRecordsView)
         {
             <hr />
@@ -282,7 +471,7 @@
 
         }
 
-       
+
         <!-- Dökümanlar Tablosu -->
         @if (canDocumentRecordsView)
         {
@@ -416,8 +605,118 @@
     </div>
 </div>
 
+<!-- Satış Düzenleme Modal -->
+<div class="modal fade" id="editSaleModal" tabindex="-1" aria-labelledby="editSaleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSaleModalLabel">Satış Bilgilerini Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editSaleForm" asp-action="UpdateSale" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="editSaleDate" class="form-label">Satışa Çıkış Tarihi</label>
+                        <input type="date" class="form-control" id="editSaleDate" name="saleDate" value="@Model.SaleDate?.ToString("yyyy-MM-dd")" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSalePrice" class="form-label">Satış Fiyatı</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="editSalePrice" name="salePrice" value="@Model.SalePrice" step="0.01" required>
+                            <span class="input-group-text">₺</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Çekici Gider Kaydı Modal -->
+<div class="modal fade" id="towingExpenseModal" tabindex="-1" aria-labelledby="towingExpenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="towingExpenseModalLabel">Çekici Gider Kaydı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="towingExpenseForm" asp-action="SaveTowingExpense" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Çekici Ödeme Tarihi</label>
+                            <input type="datetime-local" class="form-control" id="towingDate" name="towingDate" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Tutar</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="towingAmount" name="towingAmount" step="0.01" required>
+                                <span class="input-group-text">₺</span>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="towingDescription" name="towingDescription" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mt-3" id="saveTowingExpenseBtn">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Styles {
     <style>
+        [data-theme-version="dark"] .plate-number::before {
+            color: white;
+        }
+
+        [data-theme-version="dark"] .info-group {
+            background: #17171e;
+        }
+
+        [data-theme-version="dark"] .card-body {
+            background: #212130;
+        }
+
+        [data-theme-version="dark"] .info-box {
+            background: #17171e;
+        }
+
+        [data-theme-version="dark"] thead > tr > th {
+            background: #17171e;
+        }
+
+        [data-theme-version="dark"] .plate-display {
+            background: #17171e;
+        }
+
+        [data-theme-version="dark"] .plate-number {
+            background: #212130;
+        }
+
+        [data-theme-version="dark"] .plate-text {
+            background: #212130;
+            color: white;
+        }
+
+        [data-theme-version="dark"] .card-header {
+            background: #212130;
+        }
+
+        [data-theme-version="dark"] .info-value {
+            color: white;
+        }
+
         .plate-display {
             text-align: center;
             padding: 30px;
@@ -439,28 +738,28 @@
             min-width: 220px;
         }
 
-        .plate-number::before {
-            content: "T.C.";
-            position: absolute;
-            top: 3px;
-            left: 8px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #000;
-        }
+            .plate-number::before {
+                content: "T.C.";
+                position: absolute;
+                top: 3px;
+                left: 8px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                color: #000;
+            }
 
-        .plate-number::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
-            background-size: 15px 15px;
-            opacity: 0.1;
-            pointer-events: none;
-        }
+            .plate-number::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
+                background-size: 15px 15px;
+                opacity: 0.1;
+                pointer-events: none;
+            }
 
         .plate-text {
             font-family: 'Arial', sans-serif;
@@ -526,12 +825,12 @@
             overflow: hidden;
         }
 
-        .table thead th {
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
-            color: #2c3e50;
-            font-weight: 600;
-        }
+            .table thead th {
+                background: #f8f9fa;
+                border-bottom: 2px solid #e9ecef;
+                color: #2c3e50;
+                font-weight: 600;
+            }
 
         .btn-group .btn {
             border-radius: 6px;
@@ -542,9 +841,9 @@
             transition: transform 0.2s;
         }
 
-        .image-container:hover {
-            transform: scale(1.02);
-        }
+            .image-container:hover {
+                transform: scale(1.02);
+            }
 
         .badge {
             padding: 0.5em 0.75em;
@@ -565,35 +864,147 @@
             border: 1px solid #e9ecef;
         }
 
-        .info-box .info-label {
-            color: #6c757d;
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+            .info-box .info-label {
+                color: #6c757d;
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+            }
+
+            .info-box .info-value {
+                color: #2c3e50;
+                font-size: 1rem;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+            }
+
+                .info-box .info-value i {
+                    color: #0d6efd;
+                }
+
+                .info-box .info-value small {
+                    font-size: 0.875rem;
+                }
+
+        .payment-modal-content {
+            padding: 24px 16px;
+            background: #fff;
+            border-radius: 18px;
+            max-width: 420px;
+            margin: 0 auto;
         }
 
-        .info-box .info-value {
-            color: #2c3e50;
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #3d4ed1;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                font-weight: 500;
+                color: #6b7280;
+                margin-bottom: 6px;
+                display: block;
+            }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 10px 14px;
             font-size: 1rem;
-            font-weight: 500;
+            background: #f9fafb;
+            color: #22223b;
+            transition: border-color 0.2s;
+        }
+
+            .form-control:focus {
+                border-color: #3d4ed1;
+                background: #fff;
+                outline: none;
+            }
+
+            .form-control.readonly {
+                background: #f3f4f6;
+                color: #6b7280;
+            }
+
+        .input-group {
             display: flex;
             align-items: center;
         }
 
-        .info-box .info-value i {
-            color: #0d6efd;
+        .input-group-text {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0 10px 10px 0;
+            padding: 10px 16px;
+            font-size: 1rem;
+            color: #3d4ed1;
         }
 
-        .info-box .info-value small {
-            font-size: 0.875rem;
+        .total-amount {
+            font-weight: 700;
+            color: #3d4ed1;
+            background: #eef2ff;
         }
 
+        .btn-success {
+            background: #3d4ed1;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            padding: 12px 0;
+            transition: background 0.2s;
+        }
+
+            .btn-success:hover {
+                background: #2739a6;
+            }
+
+        @@media (min-width: 768px) {
+            #paymentForm .row > .col-md-6 {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+        }
+
+
+        div#exitDateError {
+            padding: 10px;
+            background: red;
+            color: white;
+            font-weight: 800;
+            text-align: center;
+            border-radius: 7px;
+            margin-bottom: 20px;
+        }
     </style>
 }
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // AntiForgeryToken'ı al
+        function getToken() {
+            return $('input[name="__RequestVerificationToken"]').val();
+        }
+
+        // AJAX isteklerinde token'ı ekle
+        $.ajaxSetup({
+            headers: {
+                'RequestVerificationToken': getToken()
+            }
+        });
+
         // Resim önizleme fonksiyonu
         function showImagePreview(src) {
             const previewImage = document.getElementById('previewImage');
@@ -604,8 +1015,12 @@
 
         // Araç teslim etme fonksiyonu
         function deliverVehicle() {
+            var hasPayment = @((Model.PaymentDetail != null && Model.PaymentDetail.IsPay).ToString().ToLower());
+            if (hasPayment) {
+                Swal.fire('Uyarı', 'Bu araç için önceden ödeme alınmış!', 'warning');
+                return;
+            }
             const hasEnforcementRecords = @Model.EnforcementRecords.Any().ToString().ToLower();
-            
             if (hasEnforcementRecords) {
                 Swal.fire({
                     title: 'Dikkat!',
@@ -618,24 +1033,72 @@
                     cancelButtonText: 'İptal'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        deliverVehicleRequest();
+                        showPaymentModal();
                     }
                 });
             } else {
-                deliverVehicleRequest();
+                showPaymentModal();
             }
         }
 
-        function deliverVehicleRequest() {
+        function showPaymentModal() {
+            // Ödeme hesaplama
+            const entryDate = '@Model.EntryDate.ToString("yyyy-MM-ddTHH:mm")';
+            const exitDate = new Date().toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:mm
+            const isForSale = @Model.IsForSale.ToString().ToLower();
+            const vehicleId = @Model.Id;
+
+            // Ücret hesaplama
             $.ajax({
-                url: '@Url.Action("DeliverVehicle", "Vehicle")',
+                url: '@Url.Action("CalculatePayment", "Vehicle")',
                 type: 'POST',
-                data: { id: @Model.Id },
-                success: function(response) {
+                data: {
+                    vehicleId: vehicleId,
+                    entryDate: entryDate,
+                    exitDate: exitDate,
+                    isForSale: isForSale,
+                    __RequestVerificationToken: getToken()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#totalDays').val(response.totalDays);
+                        $('#dailyPrice').val(response.dailyPrice.toFixed(2));
+                        $('#totalAmount').val(response.totalAmount.toFixed(2));
+
+                        // Modal'ı göster
+                        const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+                        paymentModal.show();
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Ücret hesaplanırken bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: 'Ücret hesaplanırken bir hata oluştu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+
+        // Ödeme formu submit
+        $('#paymentForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
                     if (response.success) {
                         Swal.fire({
                             title: 'Başarılı!',
-                            text: 'Araç başarıyla teslim edildi.',
+                            text: 'Ödeme bilgileri başarıyla kaydedildi.',
                             icon: 'success'
                         }).then(() => {
                             location.reload();
@@ -643,19 +1106,302 @@
                     } else {
                         Swal.fire({
                             title: 'Hata!',
-                            text: response.message || 'Araç teslim edilirken bir hata oluştu.',
+                            text: response.message || 'Bir hata oluştu.',
                             icon: 'error'
                         });
                     }
                 },
-                error: function() {
+                error: function () {
                     Swal.fire({
                         title: 'Hata!',
-                        text: 'Araç teslim edilirken bir hata oluştu.',
+                        text: 'İşlem sırasında bir hata oluştu.',
                         icon: 'error'
                     });
                 }
             });
+        });
+
+        // Satış formu submit
+        $('#saleForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Araç başarıyla satışa çıkarıldı.',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        // Satış düzenleme formu submit
+        $('#editSaleForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Satış bilgileri başarıyla güncellendi.',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        // Satış silme fonksiyonu
+        function deleteSale() {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Satış bilgileri kalıcı olarak silinecek!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, Sil',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteSale", "Vehicle")',
+                        type: 'POST',
+                        data: {
+                            id: @Model.Id,
+                            __RequestVerificationToken: getToken()
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Başarılı!',
+                                    text: 'Satış bilgileri başarıyla silindi.',
+                                    icon: 'success'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Hata!',
+                                    text: response.message || 'Bir hata oluştu.',
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: 'İşlem sırasında bir hata oluştu.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
+            });
         }
+
+        $(document).on('click', '#confirmDeletePaymentBtn', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Vehicle/DeletePayment',
+                type: 'POST',
+                data: {
+                    vehicleId: '@ViewBag.VehicleId',
+                    __RequestVerificationToken: $('input[name=__RequestVerificationToken]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#deletePaymentModal').modal('hide');
+                        Swal.fire('Başarılı!', 'Ödeme kaydı silindi.', 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Hata!', response.message || 'Bir hata oluştu.', 'error');
+                    }
+                },
+                error: function () {
+                    Swal.fire('Hata!', 'İşlem sırasında bir hata oluştu.', 'error');
+                }
+            });
+        });
+
+        function validatePaymentForm() {
+            var entryDate = '@Model.EntryDate.ToString("yyyy-MM-ddTHH:mm")';
+            var exitDate = $('#exitDate').val();
+            var paymentDate = $('#paymentDate').val();
+            var now = new Date();
+            var nowStr = now.getFullYear() + '-' +
+                (now.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                now.getDate().toString().padStart(2, '0') + 'T' +
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+            var nowInput = new Date(nowStr);
+
+            var exitValid = true;
+            var paymentValid = true;
+
+            // Çıkış tarihi kontrolü
+            if (!exitDate || new Date(exitDate) <= new Date(entryDate)) {
+                $('#exitDate').addClass('is-invalid');
+                $('#exitDateError').show();
+                exitValid = false;
+            } else {
+                $('#exitDate').removeClass('is-invalid');
+                $('#exitDateError').hide();
+            }
+
+            // Ödeme tarihi kontrolü (sadece ileri bir dakika seçilirse uyarı ver)
+            if (new Date(paymentDate).getTime() > nowInput.getTime()) {
+                $('#paymentDate').addClass('is-invalid');
+                $('#paymentDateError').show();
+                paymentValid = false;
+            } else {
+                $('#paymentDate').removeClass('is-invalid');
+                $('#paymentDateError').hide();
+            }
+
+            // Buton durumu
+            $('#savePaymentBtn').prop('disabled', !(exitValid && paymentValid));
+        }
+
+        // Çıkış tarihi değişince hem validasyon hem hesaplama
+        $(document).on('input change', '#exitDate', function () {
+            validatePaymentForm();
+            // Sadece validasyon geçerliyse ve boş değilse hesaplama yap
+            if (!$('#exitDate').hasClass('is-invalid') && $('#exitDate').val()) {
+                var entryDate = '@Model.EntryDate.ToString("yyyy-MM-ddTHH:mm")';
+                var exitDate = $('#exitDate').val();
+                var isForSale = '@Model.IsForSale.ToString().ToLower()';
+                $.ajax({
+                    url: '/Vehicle/CalculatePayment',
+                    type: 'POST',
+                    data: {
+                        vehicleId: '@Model.Id',
+                        entryDate: entryDate,
+                        exitDate: exitDate,
+                        isForSale: isForSale,
+                        __RequestVerificationToken: $('input[name=__RequestVerificationToken]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#totalDays').val(response.totalDays);
+                            $('#dailyPrice').val(response.dailyPrice.toFixed(2));
+                            $('#totalAmount').val(response.totalAmount.toFixed(2));
+                        }
+                    }
+                });
+            }
+        });
+
+        // Ödeme tarihi değişince sadece validasyon
+        $(document).on('input change', '#paymentDate', validatePaymentForm);
+
+        // Modal açıldığında alanları güncel saatle doldur ve kontrol et
+        $(document).on('shown.bs.modal', '#paymentModal', function () {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = (now.getMonth() + 1).toString().padStart(2, '0');
+            var day = now.getDate().toString().padStart(2, '0');
+            var hour = now.getHours().toString().padStart(2, '0');
+            var minute = now.getMinutes().toString().padStart(2, '0');
+            var formattedDate = `${year}-${month}-${day}T${hour}:${minute}`;
+            $('#exitDate').val(formattedDate);
+            $('#paymentDate').val(formattedDate);
+            validatePaymentForm();
+        });
+
+        // Tutarı düzenle checkbox kontrolü
+        $(document).on('change', '#editTotalAmountCheck', function () {
+            if ($(this).is(':checked')) {
+                $('#totalAmount').prop('readonly', false);
+            } else {
+                $('#totalAmount').prop('readonly', true);
+            }
+        });
+
+        // Çekici gider kaydı formu submit
+        $('#towingExpenseForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Çekici gider kaydı başarıyla eklendi.',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+
+        // Modal açıldığında tarihi güncelle
+        $(document).on('shown.bs.modal', '#towingExpenseModal', function () {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = (now.getMonth() + 1).toString().padStart(2, '0');
+            var day = now.getDate().toString().padStart(2, '0');
+            var hour = now.getHours().toString().padStart(2, '0');
+            var minute = now.getMinutes().toString().padStart(2, '0');
+            var formattedDate = `${year}-${month}-${day}T${hour}:${minute}`;
+            $('#towingDate').val(formattedDate);
+        });
     </script>
 } 

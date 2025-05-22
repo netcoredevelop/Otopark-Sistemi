@@ -93,4 +93,16 @@ public class VehicleCreateViewModel
     [Display(Name = "Park Yeri")]
     public int? ParkLocationId { get; set; }
     public SelectList? ParkLocations { get; set; }
+
+
+    [Display(Name = "Satışa Çıktı")]
+    public bool IsForSale { get; set; }
+
+    [Display(Name = "Satışa Çıkış Tarihi")]
+    [DataType(DataType.Date)]
+    public DateTime? SaleDate { get; set; }
+
+    [Display(Name = "Satış Fiyatı")]
+    [DataType(DataType.Currency)]
+    public decimal? SalePrice { get; set; }
 } 

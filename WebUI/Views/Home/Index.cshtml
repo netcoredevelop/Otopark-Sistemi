@@ -5,6 +5,39 @@
 }
 
 <div class="container-fluid">
+    <!-- Şube Seçici Alanı Başlangıç -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow branch-select-card mb-4" style="background: linear-gradient(90deg, #23242a 0%, #343a40 100%); border-radius: 12px; border: none;">
+                <div class="card-body d-flex flex-wrap align-items-center justify-content-between py-3 px-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-building fa-lg text-primary me-2"></i>
+                        <span class="fw-bold text-white" style="font-size: 1.1rem; letter-spacing: 1px;">Şube Seçiniz:</span>
+                    </div>
+                    <div style="min-width: 220px;">
+                        <select id="branchSelect" class="form-select branch-select-dropdown">
+                            <option value="">Tüm Şubeler</option>
+                            @if (ViewBag.Branches != null)
+                            {
+                                foreach (var branch in ViewBag.Branches)
+                                {
+                                    <option value="@branch.Id">@branch.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center ms-3" style="gap: 0.5rem;">
+                        <label for="startDate" class="text-white mb-0" style="font-size:0.95rem;">Tarih:</label>
+                        <input type="date" id="startDate" class="form-control branch-date-input" style="width:auto;">
+                        <span class="mx-1 text-white">-</span>
+                        <input type="date" id="endDate" class="form-control branch-date-input" style="width:auto;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Şube Seçici Alanı Bitiş -->
+
     <!-- Üst Kartlar -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
@@ -106,10 +139,30 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">Şube Bazlı Aktif Araç Dağılımı</div>
+                <div class="card-body">
+                    <div id="activeVehiclesByBranch"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">Aylık Giriş/Çıkış Sayısı</div>
+                <div class="card-body">
+                    <div id="monthlyEntries"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         let weeklyEntryChart;
         let incomeChart;
@@ -175,9 +228,16 @@
             });
         }
 
-        // İstatistikleri güncelle
+        function getDateParams() {
+            return {
+                branchId: $('#branchSelect').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val()
+            };
+        }
+
         function updateStatistics() {
-            $.get('/api/statistics', function(data) {
+            $.get('/api/statistics', getDateParams(), function(data) {
                 $('#dailyEntryCount').text(data.dailyEntryCount);
                 $('#dailyIncome').text('₺' + data.dailyIncome.toFixed(2));
                 $('#activeVehicleCount').text(data.activeVehicleCount);
@@ -185,9 +245,8 @@
             });
         }
 
-        // Haftalık verileri güncelle
         function updateWeeklyData() {
-            $.get('/api/statistics/weekly-entries', function(data) {
+            $.get('/api/statistics/weekly-entries', getDateParams(), function(data) {
                 if (weeklyEntryChart) {
                     weeklyEntryChart.data.labels = data.labels;
                     weeklyEntryChart.data.datasets[0].data = data.data;
@@ -198,9 +257,8 @@
             });
         }
 
-        // Gelir dağılımını güncelle
         function updateIncomeDistribution() {
-            $.get('/api/statistics/income-distribution', function(data) {
+            $.get('/api/statistics/income-distribution', getDateParams(), function(data) {
                 if (incomeChart) {
                     incomeChart.data.labels = data.labels;
                     incomeChart.data.datasets[0].data = data.data;
@@ -211,17 +269,48 @@
             });
         }
 
-        // Sayfa yüklendiğinde istatistikleri güncelle
-        $(document).ready(function() {
+        function loadActiveVehiclesByBranch() {
+            $.get('/api/statistics/active-vehicles-by-branch', getDateParams(), function(data) {
+                var options = {
+                    chart: { type: 'donut', height: 320 },
+                    labels: data.labels,
+                    series: data.data,
+                    colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0'],
+                    legend: { position: 'bottom' }
+                };
+                var chart = new ApexCharts(document.querySelector("#activeVehiclesByBranch"), options);
+                chart.render();
+            });
+        }
+
+        function loadMonthlyEntries() {
+            $.get('/api/statistics/monthly-entries', getDateParams(), function(data) {
+                var options = {
+                    chart: { type: 'bar', height: 320 },
+                    series: [
+                        { name: 'Giriş', data: data.entries },
+                        { name: 'Çıkış', data: data.exits }
+                    ],
+                    xaxis: { categories: data.labels },
+                    colors: ['#00E396', '#FF4560']
+                };
+                var chart = new ApexCharts(document.querySelector("#monthlyEntries"), options);
+                chart.render();
+            });
+        }
+
+        function refreshAll() {
             updateStatistics();
             updateWeeklyData();
             updateIncomeDistribution();
-            // Her 5 dakikada bir güncelle
-            setInterval(function() {
-                updateStatistics();
-                updateWeeklyData();
-                updateIncomeDistribution();
-            }, 300000);
+            loadActiveVehiclesByBranch();
+            loadMonthlyEntries();
+        }
+
+        $(document).ready(function() {
+            $('#branchSelect, #startDate, #endDate').on('change', refreshAll);
+            refreshAll();
+            setInterval(refreshAll, 300000);
         });
 
         function editVehicle(id) {
@@ -255,3 +344,64 @@
         }
     </script>
 }
+@section Styles {
+    <style>
+        .branch-select-card {
+            background: linear-gradient(90deg, #23242a 0%, #343a40 100%) !important;
+            border-radius: 12px !important;
+            border: none !important;
+        }
+        .branch-select-card .card-body {
+            padding-top: 1.2rem !important;
+            padding-bottom: 1.8rem !important;
+        }
+        .branch-select-dropdown {
+            background: #181a20;
+            color: #fff;
+            border: 1px solid #0d6efd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+            transition: border-color 0.2s;
+        }
+        .branch-select-dropdown:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 0 0.15rem rgba(13,110,253,0.15);
+        }
+        .branch-select-card .text-white {
+            color: #fff !important;
+        }
+        .branch-date-input {
+            background: #181a20;
+            color: #fff;
+            border: 1px solid #0d6efd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+            transition: border-color 0.2s;
+            min-width: 120px;
+        }
+        .branch-date-input:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 0 0.15rem rgba(13,110,253,0.15);
+        }
+        @@media (max-width: 600px) {
+            .branch-select-card .card-body {
+                flex-direction: column !important;
+                gap: 1rem !important;
+                align-items: flex-start !important;
+            }
+            .branch-select-dropdown, .branch-date-input {
+                width: 100%;
+            }
+            .branch-date-input {
+                min-width: 0;
+            }
+        }
+    </style>
+}
+

@@ -34,8 +34,8 @@
         border: 1px solid #23242a !important;
     }
 
-        [data-theme-version="dark"] .filter-form .form-label{
-            color:white;
+        [data-theme-version="dark"] .filter-form .form-label {
+            color: white;
         }
 
         [data-theme-version="dark"] .filter-form .form-control,
@@ -71,6 +71,7 @@
         background: #0d6efd !important;
         color: #fff !important;
     }
+
     .vehicle-table {
         background: #fff;
         border-radius: 8px;
@@ -81,126 +82,149 @@
         width: 100%;
         border: 1px solid #e3e6f0;
     }
-    .vehicle-table th {
-        background: #f4f6fa;
-        color: #2a2e36;
-        font-weight: 600;
-        border-bottom: 2px solid #e3e6f0;
-        padding: 0.85rem 1rem;
-        text-align: left;
-        border-right: 1px solid #e3e6f0;
-    }
-    .vehicle-table th:last-child {
-        border-right: none;
-    }
-    .vehicle-table td {
-        border-bottom: 1px solid #e3e6f0;
-        padding: 0.75rem 1rem;
-        color: #3a3b45;
-        background: #fff;
-    }
-    .vehicle-table tr:last-child td {
-        border-bottom: none;
-    }
-    .vehicle-table tr:hover td {
-        background: #f8fafc;
-    }
+
+        .vehicle-table th {
+            background: #f4f6fa;
+            color: #2a2e36;
+            font-weight: 600;
+            border-bottom: 2px solid #e3e6f0;
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-right: 1px solid #e3e6f0;
+        }
+
+            .vehicle-table th:last-child {
+                border-right: none;
+            }
+
+        .vehicle-table td {
+            border-bottom: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
+            color: #3a3b45;
+            background: #fff;
+        }
+
+        .vehicle-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .vehicle-table tr:hover td {
+            background: #f8fafc;
+        }
 
     table.table.vehicle-table > thead > tr > th {
         font-size: 12px;
-        font-weight:700;
+        font-weight: 700;
     }
+
     .btn-group-horizontal {
         display: flex;
         flex-direction: row;
         gap: 0.3rem;
     }
+
     .pagination {
         margin: 0;
         gap: 4px;
     }
-    .pagination .page-item {
-        margin: 0;
-    }
-    .pagination .page-link {
-        border: none;
-        padding: 8px 16px;
-        color: #2c3e50;
-        background: #fff;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 36px;
-        height: 36px;
-    }
-    .pagination .page-link:hover {
-        background: #f8f9fa;
-        color: #0d6efd;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .pagination .page-item.active .page-link {
-        background: #0d6efd;
-        color: #fff;
-        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
-    }
-    .pagination .page-item.disabled .page-link {
-        background: #f8f9fa;
-        color: #adb5bd;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
-    .pagination .page-item.disabled .page-link:hover {
-        transform: none;
-        box-shadow: none;
-    }
-    .pagination .page-indicator .page-link {
-        padding: 8px 12px;
-    }
-    .pagination .page-indicator .page-link i {
-        font-size: 0.8rem;
-    }
+
+        .pagination .page-item {
+            margin: 0;
+        }
+
+        .pagination .page-link {
+            border: none;
+            padding: 8px 16px;
+            color: #2c3e50;
+            background: #fff;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+
+            .pagination .page-link:hover {
+                background: #f8f9fa;
+                color: #0d6efd;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+        .pagination .page-item.active .page-link {
+            background: #0d6efd;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background: #f8f9fa;
+            color: #adb5bd;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+            .pagination .page-item.disabled .page-link:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+        .pagination .page-indicator .page-link {
+            padding: 8px 12px;
+        }
+
+            .pagination .page-indicator .page-link i {
+                font-size: 0.8rem;
+            }
+
     .page-info {
         color: #6c757d;
         font-size: 0.9rem;
         font-weight: 500;
     }
+
     @@media (max-width: 768px) {
         .vehicle-table th, .vehicle-table td {
             font-size: 13px;
             padding: 0.3rem;
         }
+
         .pagination {
             font-size: 13px;
         }
+
         .card-header .btn {
             margin-top: 8px;
         }
     }
+
     .filter-form {
         background-color: #f8f9fa;
         padding: 1rem;
         border-radius: 0.5rem;
         margin-bottom: 1rem;
     }
-    .filter-form .form-label {
-        font-weight: 500;
-        color: #495057;
-    }
-    .filter-form .form-control,
-    .filter-form .form-select {
-        border: 1px solid #ced4da;
-    }
-    .filter-form .form-control:focus,
-    .filter-form .form-select:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
+
+        .filter-form .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select {
+            border: 1px solid #ced4da;
+        }
+
+            .filter-form .form-control:focus,
+            .filter-form .form-select:focus {
+                border-color: #80bdff;
+                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            }
 
     /* Plaka stilleri */
     .plate-number-list {
@@ -219,72 +243,74 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .plate-number-list::before {
-        content: "T.C.";
-        position: absolute;
-        top: 2px;
-        left: 6px;
-        font-size: 0.6rem;
-        font-weight: bold;
-        color: #000;
-    }
+        .plate-number-list::before {
+            content: "T.C.";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #000;
+        }
 
-    .plate-number-list::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
-        background-size: 10px 10px;
-        opacity: 0.1;
-        pointer-events: none;
-    }
+        .plate-number-list::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 48%, #000 49%, #000 51%, transparent 52%);
+            background-size: 10px 10px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
 </style>
 
 @section Scripts {
     <script>
         // Plaka formatı için fonksiyon
-        function formatPlateNumber(input) {
-            // Sadece harf, rakam ve tire karakterlerine izin ver
-            let value = input.value.replace(/[^A-Za-z0-9-]/g, '');
-            
-            // Tire karakterlerini kaldır
-            value = value.replace(/-/g, '');
-            
-            // Plaka formatını uygula (34ABC123)
-            if (value.length > 0) {
-                // İlk 2 karakter (şehir kodu)
-                let formatted = value.substring(0, 2);
-                
-                // Sonraki karakterler (harfler ve rakamlar)
-                if (value.length > 2) {
-                    formatted += '-' + value.substring(2, 5);
+
+
+        // Form submit işlemi
+        const filterForm = document.querySelector('.filter-form');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const params = new URLSearchParams();
+
+                // Sadece değeri olan parametreleri ekle
+                for (let [key, value] of formData.entries()) {
+                    if (value && value.trim() !== '') {
+                        params.append(key, value.trim());
+                    }
                 }
-                if (value.length > 5) {
-                    formatted += '-' + value.substring(5, 8);
+
+                // Sayfa boyutu ve sıralama parametrelerini ekle
+                const pageSize = document.querySelector('select[name="pageSize"]').value;
+                const sortOrder = document.querySelector('select[name="sortOrder"]').value;
+
+                if (pageSize !== '10') {
+                    params.append('pageSize', pageSize);
                 }
-                
-                input.value = formatted.toUpperCase();
-            }
+                if (sortOrder !== 'desc') {
+                    params.append('sortOrder', sortOrder);
+                }
+
+                // URL'yi oluştur ve yönlendir
+                const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+                window.location.href = url;
+            });
         }
 
-        // Sayfa yüklendiğinde tüm plaka inputlarını formatla
-        document.addEventListener('DOMContentLoaded', function() {
-            const plateInputs = document.querySelectorAll('input[name="plateNumber"]');
-            plateInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    formatPlateNumber(this);
-                });
-            });
-
-            // Form submit işlemi
-            const filterForm = document.querySelector('.filter-form');
-            if (filterForm) {
-                filterForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
+        // Select değişikliklerinde form submit
+        const selects = document.querySelectorAll('select[name="pageSize"], select[name="sortOrder"]');
+        selects.forEach(select => {
+            select.addEventListener('change', function () {
+                const form = this.closest('form');
+                if (form) {
+                    const formData = new FormData(form);
                     const params = new URLSearchParams();
 
                     // Sadece değeri olan parametreleri ekle
@@ -294,46 +320,13 @@
                         }
                     }
 
-                    // Sayfa boyutu ve sıralama parametrelerini ekle
-                    const pageSize = document.querySelector('select[name="pageSize"]').value;
-                    const sortOrder = document.querySelector('select[name="sortOrder"]').value;
-
-                    if (pageSize !== '10') {
-                        params.append('pageSize', pageSize);
-                    }
-                    if (sortOrder !== 'desc') {
-                        params.append('sortOrder', sortOrder);
-                    }
-
                     // URL'yi oluştur ve yönlendir
                     const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
                     window.location.href = url;
-                });
-            }
-
-            // Select değişikliklerinde form submit
-            const selects = document.querySelectorAll('select[name="pageSize"], select[name="sortOrder"]');
-            selects.forEach(select => {
-                select.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    if (form) {
-                        const formData = new FormData(form);
-                        const params = new URLSearchParams();
-
-                        // Sadece değeri olan parametreleri ekle
-                        for (let [key, value] of formData.entries()) {
-                            if (value && value.trim() !== '') {
-                                params.append(key, value.trim());
-                            }
-                        }
-
-                        // URL'yi oluştur ve yönlendir
-                        const url = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
-                        window.location.href = url;
-                    }
-                });
+                }
             });
         });
+                        });
     </script>
 }
 
@@ -463,14 +456,15 @@
                     <table class="table vehicle-table">
                         <thead>
                             <tr>
-                                
+
                                 <th>Plaka</th>
                                 <th>Araç Sahibi</th>
                                 <th>Giriş Tarihi</th>
                                 <th>Çıkış Tarihi</th>
                                 <th>Şube</th>
                                 <th>Araç Markası</th>
-                                <th>Araç Modeli</th>
+                                <th>Araç Tipi</th>
+                                <th>Ücret</th>
                                 <th>Park Yeri</th>
                                 <th>İşlemler</th>
                             </tr>
@@ -509,15 +503,32 @@
                                     </td>
                                     <td>@item.Branch?.Name</td>
                                     <td>@item.VehicleBrand?.Name</td>
-                                    <td>@item.VehicleModel?.Name</td>
-                                    <td>@item.ParkLocation?.Name</td>
-
+                                    <td>@item.VehicleType?.Name</td>
                                     <td>
-                                        <div class="btn-group-horizontal" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-xs" title="Detaylar">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            @if (canEdit)
+                                        @{
+                                            if (item.Transactions.Any(x => x.TransactionCategoryId == 1))
+                                            {
+                                                <span class="badge badge-pill badge-info"> 
+                                                        @item.Transactions.First(x => x.TransactionCategoryId == 1).Amount.ToString() ₺
+                                                </span>
+                                            }
+                                            
+
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+
+                                         }
+                                        </td>
+                                        <td>@item.ParkLocation?.Name</td>
+
+                                        <td>
+                                            <div class="btn-group-horizontal" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-xs" title="Detaylar">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+@*                                                 @if (canEdit)
                                             {
                                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-xs" title="Düzenle">
                                                     <i class="fas fa-edit"></i>
@@ -528,7 +539,7 @@
                                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-xs" title="Sil">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
-                                            }
+                                            } *@
                                         </div>
                                     </td>
                                 </tr>
@@ -556,7 +567,7 @@
                                     var endDate = Context.Request.Query["endDate"].ToString();
                                 }
                                 <li class="page-item page-indicator @(!Model.HasPreviousPage ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" 
+                                    <a class="page-link" asp-action="Index"
                                        asp-route-pageIndex="@(Model.PageIndex - 1)"
                                        asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
                                        asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
@@ -582,7 +593,7 @@
                                     if (startPage > 1)
                                     {
                                         <li class="page-item">
-                                            <a class="page-link" asp-action="Index" 
+                                            <a class="page-link" asp-action="Index"
                                                asp-route-pageIndex="1"
                                                asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
                                                asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
@@ -602,7 +613,7 @@
                                     for (int i = startPage; i <= endPage; i++)
                                     {
                                         <li class="page-item @(i == currentPage ? "active" : "")">
-                                            <a class="page-link" asp-action="Index" 
+                                            <a class="page-link" asp-action="Index"
                                                asp-route-pageIndex="@i"
                                                asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
                                                asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
@@ -622,7 +633,7 @@
                                             </li>
                                         }
                                         <li class="page-item">
-                                            <a class="page-link" asp-action="Index" 
+                                            <a class="page-link" asp-action="Index"
                                                asp-route-pageIndex="@totalPages"
                                                asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
                                                asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"
@@ -634,7 +645,7 @@
                                     }
                                 }
                                 <li class="page-item page-indicator @(!Model.HasNextPage ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" 
+                                    <a class="page-link" asp-action="Index"
                                        asp-route-pageIndex="@(Model.PageIndex + 1)"
                                        asp-route-pageSize="@(pageSize != "10" ? pageSize : null)"
                                        asp-route-sortOrder="@(sortOrder != "desc" ? sortOrder : null)"

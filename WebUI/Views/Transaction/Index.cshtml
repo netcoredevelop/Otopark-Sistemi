@@ -1,0 +1,417 @@
+@model IEnumerable<Domain.Entities.Transaction>
+
+@{
+    ViewData["Title"] = "Gelir-Gider İşlemleri";
+}
+
+<style>
+    [data-theme-version="dark"] .card,
+    [data-theme-version="dark"] .transaction-table,
+    [data-theme-version="dark"] .filter-form {
+        background: #181a20 !important;
+        color: #f1f1f1 !important;
+    }
+
+        [data-theme-version="dark"] .transaction-table th {
+            background: #23242a !important;
+            color: #f1f1f1 !important;
+            border-bottom: 2px solid #23242a !important;
+            border-right: 1px solid #23242a !important;
+        }
+
+        [data-theme-version="dark"] .transaction-table td {
+            background: #181a20 !important;
+            color: #f1f1f1 !important;
+            border-bottom: 1px solid #23242a !important;
+        }
+
+    [data-theme-version="dark"] .filter-form {
+        background: #23242a !important;
+        border: 1px solid #23242a !important;
+    }
+
+        [data-theme-version="dark"] .filter-form .form-label {
+            color: white;
+        }
+
+        [data-theme-version="dark"] .filter-form .form-control,
+        [data-theme-version="dark"] .filter-form .form-select {
+            color: #f1f1f1 !important;
+            background: #181a20 !important;
+            border: 1px solid #23242a !important;
+        }
+
+            [data-theme-version="dark"] .filter-form .form-control:focus,
+            [data-theme-version="dark"] .filter-form .form-select:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25) !important;
+                background: #23242a !important;
+                color: #fff !important;
+            }
+
+    .transaction-table {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 32px;
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #e3e6f0;
+    }
+
+        .transaction-table th {
+            background: #f4f6fa;
+            color: #2a2e36;
+            font-weight: 600;
+            border-bottom: 2px solid #e3e6f0;
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-right: 1px solid #e3e6f0;
+        }
+
+            .transaction-table th:last-child {
+                border-right: none;
+            }
+
+        .transaction-table td {
+            border-bottom: 1px solid #e3e6f0;
+            padding: 0.75rem 1rem;
+            color: #3a3b45;
+            background: #fff;
+        }
+
+        .transaction-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .transaction-table tr:hover td {
+            background: #f8fafc;
+        }
+
+    .filter-form {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+        .filter-form .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select {
+            border: 1px solid #ced4da;
+        }
+
+            .filter-form .form-control:focus,
+            .filter-form .form-select:focus {
+                border-color: #80bdff;
+                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            }
+
+    .nav-tabs .nav-link {
+        color: #495057;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            background: none;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border: none;
+            color: #0d6efd;
+        }
+
+    .amount-income {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    .amount-expense {
+        color: #dc3545;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row page-titles mx-0">
+        <div class="col-sm-6 p-md-0">
+            <div class="welcome-text">
+                <h4>Gelir-Gider İşlemleri</h4>
+            </div>
+        </div>
+        <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <a asp-action="Create" class="btn btn-primary">Yeni İşlem Ekle</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Filtrele</h4>
+                </div>
+                <div class="card-body">
+                    <form method="get" asp-action="Filter" class="row filter-form">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Şube</label>
+                                <select name="branchId" class="form-control form-select" asp-items="ViewBag.Branches">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Kategori</label>
+                                <select name="categoryId" class="form-control form-select" asp-items="ViewBag.TransactionCategories">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" name="startDate" class="form-control" value="@ViewBag.StartDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">Bitiş Tarihi</label>
+                                <input type="date" name="endDate" class="form-control" value="@ViewBag.EndDate" />
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-primary">Filtrele</button>
+                            <a asp-action="Index" class="btn btn-secondary">Temizle</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="transactionTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                                Tümü
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income" type="button" role="tab">
+                                Gelirler
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense" type="button" role="tab">
+                                Giderler
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="transactionTabsContent">
+                        <div class="tab-pane fade show active" id="all" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table transaction-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tarih</th>
+                                            <th>Kategori</th>
+                                            <th>Şube</th>
+                                            <th>Araç</th>
+                                            <th>Tutar</th>
+                                            <th>Açıklama</th>
+                                            <th>Referans No</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.TransactionDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                                <td>
+                                                    <span class="badge @(item.TransactionCategory.Type == Domain.Entities.TransactionType.Gelir ? "badge-success" : "badge-danger")">
+                                                        @item.TransactionCategory.Name
+                                                    </span>
+                                                </td>
+                                                <td>@(item.Branch?.Name ?? "-")</td>
+                                                <td>
+                                                    @if (item.Vehicle?.PlateNumber != null)
+                                                    {
+                                                        <a asp-action="Details" asp-controller="Vehicle" asp-route-id="@item.VehicleId" asp-route-returnUrl="@Context.Request.Path">
+                                                            @item.Vehicle?.PlateNumber.ToString()
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>-</span>
+                                                    }
+                                                </td>
+                                                <td class="@(item.TransactionCategory.Type == Domain.Entities.TransactionType.Gelir ? "amount-income" : "amount-expense")">
+                                                    @item.Amount.ToString("N2") ₺
+                                                </td>
+                                                <td>@item.Description</td>
+                                                <td>@item.ReferenceNumber</td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu işlemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="income" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table transaction-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tarih</th>
+                                            <th>Kategori</th>
+                                            <th>Şube</th>
+                                            <th>Araç</th>
+                                            <th>Tutar</th>
+                                            <th>Açıklama</th>
+                                            <th>Referans No</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Where(t => t.TransactionCategory.Type == Domain.Entities.TransactionType.Gelir))
+                                        {
+                                            <tr>
+                                                <td>@item.TransactionDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                                <td>
+                                                    <span class="badge badge-success">
+                                                        @item.TransactionCategory.Name
+                                                    </span>
+                                                </td>
+                                                <td>@(item.Branch?.Name ?? "-")</td>
+                                                <td>@(item.Vehicle?.PlateNumber ?? "-")</td>
+                                                <td class="amount-income">
+                                                    @item.Amount.ToString("N2") ₺
+                                                </td>
+                                                <td>@item.Description</td>
+                                                <td>@item.ReferenceNumber</td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu işlemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="expense" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table transaction-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tarih</th>
+                                            <th>Kategori</th>
+                                            <th>Şube</th>
+                                            <th>Araç</th>
+                                            <th>Tutar</th>
+                                            <th>Açıklama</th>
+                                            <th>Referans No</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Where(t => t.TransactionCategory.Type == Domain.Entities.TransactionType.Gider))
+                                        {
+                                            <tr>
+                                                <td>@item.TransactionDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                                <td>
+                                                    <span class="badge badge-danger">
+                                                        @item.TransactionCategory.Name
+                                                    </span>
+                                                </td>
+                                                <td>@(item.Branch?.Name ?? "-")</td>
+                                                <td>@(item.Vehicle?.PlateNumber ?? "-")</td>
+                                                <td class="amount-expense">
+                                                    @item.Amount.ToString("N2") ₺
+                                                </td>
+                                                <td>@item.Description</td>
+                                                <td>@item.ReferenceNumber</td>
+                                                <td>
+                                                    <div class="btn-group-horizontal">
+                                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline;">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bu işlemi silmek istediğinizden emin misiniz?')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Tab değiştiğinde URL'i güncelle
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                const target = $(e.target).data('bs-target');
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', target.replace('#', ''));
+                window.history.pushState({}, '', url);
+            });
+
+            // Sayfa yüklendiğinde URL'deki tab'ı aktif et
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                $(`button[data-bs-target="#${tab}"]`).tab('show');
+            }
+        });
+    </script>
+} 

@@ -114,4 +114,10 @@ public class VehicleService : IVehicleService
 
         return query;
     }
+
+    public bool GetPlateNumber(string PlateNumber)
+    {
+        var data = _vehicleRepository.GetByPlateNumberAsync(PlateNumber);
+        return (bool)data ;
+    }
 }

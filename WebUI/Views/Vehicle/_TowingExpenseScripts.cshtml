@@ -1,0 +1,114 @@
+@model WebUI.Models.Vehicle.TowingExpenseViewModel
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    // jQuery'nin yüklendiğinden emin ol
+    if (typeof jQuery === 'undefined') {
+        console.error('jQuery yüklenmemiş!');
+    } else {
+        // Event binding'i daha güvenli hale getirmek için
+        jQuery(document).on('click', '#editTowingExpenseForm button[type="submit"]', function(e) {
+            e.preventDefault();
+            console.log('Kaydet butonuna tıklandı'); // Debug için log
+            
+            var amount = parseFloat(jQuery('#editAmount').val().replace(',', '.'));
+            
+            var data = {
+                id: jQuery('#editTowingExpenseForm input[name="id"]').val(),
+                towingDate: jQuery('#editTowingDate').val(),
+                amount: amount,
+                description: jQuery('#editDescription').val(),
+                __RequestVerificationToken: jQuery('input[name=__RequestVerificationToken]').val()
+            };
+
+            console.log('Gönderilecek veri:', data); // Debug için log
+
+            jQuery.ajax({
+                url: '@Url.Action("UpdateTowingExpense", "Vehicle")',
+                type: 'POST',
+                data: data,
+                success: function (response) {
+                    console.log('Sunucu yanıtı:', response); // Debug için log
+                    if (response.success) {
+                        jQuery('#editTowingExpenseModal').modal('hide');
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Çekici gider bilgileri başarıyla güncellendi.',
+                            icon: 'success'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: response.message || 'Bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX hatası:', error); // Debug için log
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu.',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+    }
+
+    // Çekici gider silme fonksiyonu
+    function deleteTowingExpense() {
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery yüklenmemiş!');
+            return;
+        }
+
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Çekici gider kaydı kalıcı olarak silinecek!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'İptal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                jQuery.ajax({
+                    url: '@Url.Action("DeleteTowingExpense", "Vehicle")',
+                    type: 'POST',
+                    data: {
+                        id: @Model.VehicleId,
+                        __RequestVerificationToken: jQuery('input[name=__RequestVerificationToken]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Başarılı!',
+                                text: 'Çekici gider kaydı başarıyla silindi.',
+                                icon: 'success'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: response.message || 'Bir hata oluştu.',
+                                icon: 'error'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: 'İşlem sırasında bir hata oluştu.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script> 

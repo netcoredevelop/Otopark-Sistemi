@@ -1,0 +1,384 @@
+@{
+    ViewData["Title"] = "Finansal Raporlar";
+    
+    var branches = ViewBag.Branches as IEnumerable<dynamic> ?? new List<dynamic>();
+    var categories = ViewBag.Categories as IEnumerable<dynamic> ?? new List<dynamic>();
+    var incomeCategories = ViewBag.IncomeCategories as IEnumerable<dynamic> ?? new List<dynamic>();
+    var expenseCategories = ViewBag.ExpenseCategories as IEnumerable<dynamic> ?? new List<dynamic>();
+    
+    var selectedBranchId = Context.Request.Query["branchId"].ToString();
+    var selectedCategoryId = Context.Request.Query["categoryId"].ToString();
+    var startDate = Context.Request.Query["startDate"].ToString();
+    var endDate = Context.Request.Query["endDate"].ToString();
+
+    // Kategori toplamlarını hesapla
+    decimal totalIncomeAmount = incomeCategories.Sum(x => (decimal)x.Amount);
+    decimal totalExpenseAmount = expenseCategories.Sum(x => (decimal)x.Amount);
+}
+
+<div class="container-fluid py-4">
+    <!-- Filtreler -->
+    <div class="card filter-card mb-4">
+        <div class="card-body">
+            <form id="filterForm" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Şube</label>
+                    <select class="form-select custom-select" id="branchId" name="branchId">
+                        <option value="">Tümü</option>
+                        @foreach (var branch in branches)
+                        {
+                            <option value="@branch.Id" selected="@(branch.Id.ToString() == selectedBranchId)">@branch.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tarih Aralığı</label>
+                    <div class="input-group date-range">
+                        <input type="date" class="form-control custom-input" id="startDate" name="startDate" value="@startDate">
+                        <span class="input-group-text">-</span>
+                        <input type="date" class="form-control custom-input" id="endDate" name="endDate" value="@endDate">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Kategori</label>
+                    <select class="form-select custom-select" id="categoryId" name="categoryId">
+                        <option value="">Tümü</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id" selected="@(category.Id.ToString() == selectedCategoryId)">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary filter-btn w-100">
+                        <i class="fas fa-search me-2"></i>Filtrele
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Özet Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card summary-card income-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Toplam Gelir</h6>
+                            <h3 class="card-title mb-0">@(ViewBag.TotalIncome?.ToString("N2") ?? "0.00") ₺</h3>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card summary-card expense-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Toplam Gider</h6>
+                            <h3 class="card-title mb-0">@(ViewBag.TotalExpense?.ToString("N2") ?? "0.00") ₺</h3>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card summary-card balance-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2">Net Durum</h6>
+                            <h3 class="card-title mb-0">@(ViewBag.NetAmount?.ToString("N2") ?? "0.00") ₺</h3>
+                        </div>
+                        <div class="card-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Detayları -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card category-card">
+                <div class="card-body">
+                    <h6 class="card-title mb-4">Gelir Kategorileri</h6>
+                    <div class="table-responsive">
+                        <table class="table custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th class="text-end">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in incomeCategories)
+                                {
+                                    <tr>
+                                        <td>@item.CategoryName</td>
+                                        <td class="text-end income-amount">@item.Amount.ToString("N2") ₺</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Toplam</th>
+                                    <th class="text-end income-amount">@totalIncomeAmount.ToString("N2") ₺</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card category-card">
+                <div class="card-body">
+                    <h6 class="card-title mb-4">Gider Kategorileri</h6>
+                    <div class="table-responsive">
+                        <table class="table custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th class="text-end">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in expenseCategories)
+                                {
+                                    <tr>
+                                        <td>@item.CategoryName</td>
+                                        <td class="text-end expense-amount">@item.Amount.ToString("N2") ₺</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Toplam</th>
+                                    <th class="text-end expense-amount">@totalExpenseAmount.ToString("N2") ₺</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        /* Filter Card Styles */
+        .filter-card {
+            background: linear-gradient(to right, #ffffff, #f8f9fa);
+        }
+
+        .form-label {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-select, .custom-input {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .custom-select:focus, .custom-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+        }
+
+        .date-range .input-group-text {
+            background-color: #fff;
+            border-color: var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .filter-btn {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.625rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #3651d4;
+            transform: translateY(-2px);
+        }
+
+        /* Summary Cards Styles */
+        .summary-card {
+            overflow: hidden;
+        }
+
+        .summary-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .income-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+        }
+
+        .expense-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0ff 100%);
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .card-title {
+            color: #2d3436;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .income-card .card-title {
+            color: var(--success-color);
+        }
+
+        .expense-card .card-title {
+            color: var(--danger-color);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .income-card .card-icon {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+
+        .expense-card .card-icon {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+
+        .balance-card .card-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Category Cards Styles */
+        .category-card {
+            height: 100%;
+        }
+
+        .category-card .card-title {
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .custom-table {
+            margin-bottom: 0;
+        }
+
+        .custom-table th {
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: none;
+            padding: 1rem;
+        }
+
+        .custom-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #2d3436;
+            font-size: 0.875rem;
+        }
+
+        .custom-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .custom-table tfoot th {
+            border-top: 2px solid var(--border-color);
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .income-amount {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .expense-amount {
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Form gönderildiğinde boş parametreleri temizle
+        $('#filterForm').on('submit', function() {
+            const form = $(this);
+            const inputs = form.find('input, select');
+            
+            inputs.each(function() {
+                if (!$(this).val()) {
+                    $(this).prop('disabled', true);
+                }
+            });
+        });
+    </script>
+} 

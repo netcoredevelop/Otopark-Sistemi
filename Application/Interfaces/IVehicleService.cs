@@ -8,11 +8,13 @@ public interface IVehicleService
 {
     Task<Vehicle?> GetByIdAsync(int id);
     Task<IEnumerable<Vehicle>> GetAllAsync();
+    bool GetPlateNumber(string PlateNumber);
     Task AddAsync(Vehicle vehicle);
     Task UpdateAsync(Vehicle vehicle);
     Task DeleteAsync(int id);
     Task HardDeleteAsync(int id);
     Task<IEnumerable<Vehicle>> GetDeletedVehiclesAsync();
+
     
     // Pagination methods
     Task<PaginatedList<Vehicle>> GetPagedAsync(int pageIndex, int pageSize);

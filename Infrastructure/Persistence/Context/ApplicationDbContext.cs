@@ -32,52 +32,54 @@ public class ApplicationDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<TransactionCategory> TransactionCategories => Set<TransactionCategory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        // Sabit tarih
-        var fixedDate = new DateTime(2025, 5, 19, 12, 0, 0, DateTimeKind.Utc);
+        //// Sabit tarih
+        //var fixedDate = new DateTime(2025, 5, 19, 12, 0, 0, DateTimeKind.Utc);
 
-        // Önceden hesaplanmış password hash (örnek)
-        // "Mehmet5255" şifresi için bcrypt hash (12 salt rounds)
-        var passwordHash = "$2a$12$eQ65yPg2F7rBe.yHmUgrDuqdf/xgPI3FSuX9vuc9jA4YaXytq8F7S";
+        //// Önceden hesaplanmış password hash (örnek)
+        //// "Mehmet5255" şifresi için bcrypt hash (12 salt rounds)
+        //var passwordHash = "$2a$12$eQ65yPg2F7rBe.yHmUgrDuqdf/xgPI3FSuX9vuc9jA4YaXytq8F7S";
 
-        modelBuilder.Entity<Role>().HasData(
-            new Role
-            {
-                Id = 1,
-                Name = "Admin",
-                CreatedDate = fixedDate,
-                CreatedBy = "System"
-            }
-        );
+        //modelBuilder.Entity<Role>().HasData(
+        //    new Role
+        //    {
+        //        Id = 1,
+        //        Name = "Admin",
+        //        CreatedDate = fixedDate,
+        //        CreatedBy = "System"
+        //    }
+        //);
 
-        modelBuilder.Entity<User>().HasData(
-            new User
-            {
-                Id = 1,
-                Username = "admin",
-                FirstName = "Admin",
-                LastName = "User",
-                Email = "admin@otopark.com",
-                PasswordHash = passwordHash,
-                CreatedDate = fixedDate,
-                CreatedBy = "System"
-            }
-        );
+        //modelBuilder.Entity<User>().HasData(
+        //    new User
+        //    {
+        //        Id = 1,
+        //        Username = "admin",
+        //        FirstName = "Admin",
+        //        LastName = "User",
+        //        Email = "admin@otopark.com",
+        //        PasswordHash = passwordHash,
+        //        CreatedDate = fixedDate,
+        //        CreatedBy = "System"
+        //    }
+        //);
 
-        modelBuilder.Entity<UserRole>().HasData(
-            new UserRole
-            {
-                Id = 1,
-                UserId = 1,
-                RoleId = 1,
-                CreatedDate = fixedDate,
-                CreatedBy = "System"
-            }
-        );
+        //modelBuilder.Entity<UserRole>().HasData(
+        //    new UserRole
+        //    {
+        //        Id = 1,
+        //        UserId = 1,
+        //        RoleId = 1,
+        //        CreatedDate = fixedDate,
+        //        CreatedBy = "System"
+        //    }
+        //);
 
         base.OnModelCreating(modelBuilder);
     }

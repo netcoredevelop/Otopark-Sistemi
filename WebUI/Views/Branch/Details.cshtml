@@ -15,23 +15,26 @@
             </div>
             <div class="card-body">
                 <dl class="row">
-                    <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+                    <dt class="col-sm-3">Şube Adı</dt>
                     <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+                    <dt class="col-sm-3">Kapasite</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Capacity)</dd>
                 </dl>
-                <div class="mt-4">
+                <div class="d-flex justify-content-end gap-2 mt-4">
                     @if (hasEditPermission)
                     {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
                             <i class="fa fa-pencil"></i> Düzenle
                         </a>
                     }
                     @if (hasRemovePermission)
                     {
-                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">
                             <i class="fa fa-trash"></i> Sil
                         </a>
                     }
-                    <a asp-action="Index" class="btn btn-secondary">
+                    <a asp-action="Index" class="btn btn-secondary btn-sm">
                         <i class="fa fa-arrow-left"></i> Listeye Dön
                     </a>
                 </div>

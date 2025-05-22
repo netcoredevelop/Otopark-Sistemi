@@ -1,8 +1,11 @@
 using Application.Interfaces;
 using Application.Services;
+using Data.Seeds;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Infrastructure;
+using Infrastructure.Persistence.Context;
 using Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,26 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuditLogActionFilter>();
 builder.Services.AddScoped<IAuditLogService,AuditLogService>();
+
 var app = builder.Build();
+
+// Veritabanı migration ve seed işlemleri
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate(); // Migration'ları uygula
+        var seedData = new SeedData(context);
+        await seedData.SeedAsync(); // Seed dataları ekle
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabanı migration veya seed işlemi sırasında bir hata oluştu.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -46,6 +68,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=PublicPage}/{action=Index}/{id?}");
 
 app.Run();

@@ -24,6 +24,8 @@ public static class RoleAuthHelper
         public const string Document = "Document";
         public const string EnforcementRecord = "EnforcementRecord";
         public const string EnforcementOffice = "EnforcementOffice";
+        public const string Transaction = "Transaction";
+        public const string TransactionCategory = "TransactionCategory";
         public const string User = "User";
         public const string Role = "Role";
     }

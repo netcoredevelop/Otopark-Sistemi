@@ -5,6 +5,9 @@ public interface IAuditLogService
 {
     Task<PaginatedList<AuditLog>> GetPagedAsync(int pageIndex, int pageSize, string? search = null);
     Task<AuditLog?> GetByIdAsync(int id);
+    Task<AuditLog?> Delete(int id);
+
+
 }
 
 public class AuditLogService : IAuditLogService
@@ -39,5 +42,14 @@ public class AuditLogService : IAuditLogService
     public async Task<AuditLog?> GetByIdAsync(int id)
     {
         return await _db.AuditLogs.FindAsync(id);
+    }
+
+    public Task<AuditLog?> Delete(int id)
+    {
+
+        var entity= _db.AuditLogs.FirstOrDefault(x=>x.Id==id);
+        _db.AuditLogs.Remove(entity);
+        _db.SaveChanges();
+        return Task.FromResult<AuditLog?>(null);
     }
 }
